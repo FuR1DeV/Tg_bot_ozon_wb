@@ -14,6 +14,8 @@ class ProductsWb(BaseModel):
     article_product = Column(BigInteger, nullable=False)
     price_spp = Column(Integer, nullable=False)
     link = Column(String, nullable=False)
+    photo = Column(ARRAY(String))
+    click = Column(Integer, server_default="0")
 
 
 class ProductsOzon(BaseModel):
@@ -27,3 +29,5 @@ class ProductsOzon(BaseModel):
     price = Column(Integer, nullable=False)
     link = Column(String, nullable=False)
     link_utm = Column(String, nullable=False)
+    photo = Column(ARRAY(String))
+    click = Column(Integer, server_default="0")

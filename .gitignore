@@ -2,4 +2,3 @@
 .idea
 pycache/
 test.py
-content.py
