@@ -1,9 +1,11 @@
-from aiogram import types
+import asyncio
+
+from aiogram import types, executor
 from aiogram.dispatcher.filters import Command
 from aiogram.types import CallbackQuery
-from aiogram.utils import executor
 
 from bot import dp
+from data.commands import general_set
 from content import items, get_item
 from markups.pagination import get_pages_keyboard, pagination_call, show_item
 
@@ -17,6 +19,11 @@ async def deep(message: types.Message):
 
 @dp.message_handler(Command("start"))
 async def show_items_handler(message: types.Message):
+    await general_set.user_add(message.from_user.id,
+                               message.from_user.username,
+                               None,
+                               message.from_user.first_name,
+                               message.from_user.last_name)
     try:
         res = message.text.split()
         await message.answer(
@@ -48,5 +55,21 @@ async def show_item(call: CallbackQuery, callback_data: dict):
     )
 
 
+async def on_startup(_):
+    # asyncio.create_task(scheduler())
+
+    from data import db_gino
+    print("Database connected")
+    await db_gino.on_startup(dp)
+
+    """Удалить БД"""
+    # await db.gino.drop_all()
+
+    """Создание БД"""
+    await db_gino.db.gino.create_all()
+
+    """Регистрация хэндлеров"""
+
+
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
