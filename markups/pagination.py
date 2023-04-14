@@ -65,3 +65,53 @@ def admin_done_wb():
                                callback_data='admin_wb_done')
     approve_.insert(get)
     return approve_
+
+
+def admin_check():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Товары Ozon',
+                               callback_data='admin_ozon_check')
+    get1 = InlineKeyboardButton(text='Товары Wildberries',
+                                callback_data='admin_wb_check')
+    approve_.insert(get)
+    approve_.insert(get1)
+    return approve_
+
+
+def admin_check_ozon():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Загрузить Excel Ozon',
+                               callback_data='admin_ozon_excel')
+    get1 = InlineKeyboardButton(text='Посмотреть все товары Ozon',
+                                callback_data='admin_ozon_tg')
+    approve_.insert(get)
+    approve_.insert(get1)
+    return approve_
+
+
+def admin_check_next_page_ozon():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Следующая страница',
+                               callback_data=f'admin_next_page_ozon')
+    approve_.insert(get)
+    return approve_
+
+
+def admin_check_wb():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Загрузить Excel Wildberries',
+                               callback_data='admin_wb_excel')
+    get1 = InlineKeyboardButton(text='Посмотреть все товары Wildberries',
+                                callback_data='admin_wb_tg')
+    approve_.insert(get)
+    approve_.insert(get1)
+    return approve_
+
+
+def admin_check_next_page_wb():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Следующая страница',
+                               callback_data=f'admin_next_page_wb')
+    approve_.insert(get)
+    return approve_
+

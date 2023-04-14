@@ -2,7 +2,7 @@ __all__ = ["register_admin_handler"]
 
 from aiogram import Dispatcher
 
-from .admin import AdminOzon, AdminWb
+from .admin import AdminOzon, AdminWb, AdminCheckOzon, AdminCheckWb
 from states import AdminStatesOzon, AdminStatesWb
 
 
@@ -24,6 +24,7 @@ def register_admin_handler(disp: Dispatcher):
     disp.register_callback_query_handler(AdminOzon.ozon_finish,
                                          state=["*"],
                                          text="admin_ozon_done")
+
     disp.register_message_handler(AdminWb.title_wb,
                                   state=AdminStatesWb.title)
     disp.register_message_handler(AdminWb.type_wb,
@@ -41,3 +42,29 @@ def register_admin_handler(disp: Dispatcher):
     disp.register_callback_query_handler(AdminWb.wb_finish,
                                          state=["*"],
                                          text="admin_wb_done")
+
+    disp.register_callback_query_handler(AdminCheckOzon.admin_check_ozon,
+                                         state=["*"],
+                                         text="admin_ozon_check")
+    disp.register_callback_query_handler(AdminCheckOzon.admin_check_ozon_excel,
+                                         state=["*"],
+                                         text="admin_ozon_excel")
+    disp.register_callback_query_handler(AdminCheckOzon.admin_check_ozon_tg,
+                                         state=["*"],
+                                         text="admin_ozon_tg")
+    disp.register_callback_query_handler(AdminCheckOzon.admin_check_ozon_tg_next,
+                                         state=["*"],
+                                         text="admin_next_page_ozon")
+
+    disp.register_callback_query_handler(AdminCheckWb.admin_check_wb,
+                                         state=["*"],
+                                         text="admin_wb_check")
+    disp.register_callback_query_handler(AdminCheckWb.admin_check_wb_excel,
+                                         state=["*"],
+                                         text="admin_wb_excel")
+    disp.register_callback_query_handler(AdminCheckWb.admin_check_wb_tg,
+                                         state=["*"],
+                                         text="admin_wb_tg")
+    disp.register_callback_query_handler(AdminCheckWb.admin_check_wb_tg_next,
+                                         state=["*"],
+                                         text="admin_next_page_wb")

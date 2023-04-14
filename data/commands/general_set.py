@@ -42,3 +42,15 @@ async def product_wb_add_with_photo(title, type_product, article_seller, article
     product_wb = ProductsWb(title=title, type_product=type_product, article_seller=article_seller,
                             article_product=article_product, price_spp=price_spp, link=link, photo=photo)
     await product_wb.create()
+
+
+async def product_ozon_click(product_id):
+    """Кликнули на продукт Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(click=product_ozon.click + 1).apply()
+
+
+async def product_wb_click(product_id):
+    """Кликнули на продукт Wildberries"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(click=product_wb.click + 1).apply()

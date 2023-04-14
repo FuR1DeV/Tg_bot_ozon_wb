@@ -1,13 +1,187 @@
+import csv
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import InputFile, ParseMode
+from aiogram.types import InputFile
 
 import states
 from bot import bot
 from markups import pagination
-from data.commands import general_set
-from settings import config
-from states import AdminStatesOzon
+from data.commands import general_set, general_get
+
+
+class AdminCheckOzon:
+    @staticmethod
+    async def admin_check_ozon(callback: types.CallbackQuery):
+        await callback.message.edit_text(text="Загрузить в Excel или просмотреть тут ?",
+                                         reply_markup=pagination.admin_check_ozon())
+
+    @staticmethod
+    async def admin_check_ozon_excel(callback: types.CallbackQuery):
+        all_products = await general_get.products_ozon_all()
+        with open("table_ozon.csv", "w", newline='', encoding="windows_1251") as file:
+            writer = csv.writer(file)
+            writer.writerow(["id", "Наименование", "Категория", "Артикул товара",
+                             "Цена", "Ссылка", "Ссылка UTM", "Фото", "Клики"])
+            for i in all_products:
+                writer.writerow([i.id, i.title, i.type_product, i.article_product,
+                                 i.price, i.link, i.link_utm, i.photo, i.click])
+        table_ozon = InputFile("table_ozon.csv")
+        await bot.send_document(chat_id=callback.from_user.id,
+                                document=table_ozon)
+
+    @staticmethod
+    async def admin_check_ozon_tg(callback: types.CallbackQuery, state: FSMContext):
+        items = await general_get.products_ozon_all()
+        book = []
+        page = 1
+        while True:
+            for i in items:
+                if int(i.id) == page:
+                    book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                f"<b>Название</b> - <i>{i.title}</i>\n"
+                                f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
+                                f"<b>Ссылка</b> - <i>{i.link}</i>\n"
+                                f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
+                                f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                f"<b>Клики</b> - <i>{i.click}</i>")
+                    page += 1
+                if len(book) == 10:
+                    break
+            if len(book) == 10:
+                break
+        for i in book:
+            await bot.send_message(callback.from_user.id,
+                                   i,
+                                   disable_web_page_preview=True)
+        async with state.proxy() as data:
+            data["page"] = page
+            data["items"] = items
+        await bot.send_message(callback.from_user.id,
+                               "Следующая страница",
+                               reply_markup=pagination.admin_check_next_page_ozon())
+
+    @staticmethod
+    async def admin_check_ozon_tg_next(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            page = data.get("page")
+            items = data.get("items")
+            book = []
+            while True:
+                for i in items:
+                    if int(i.id) == page:
+                        book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                    f"<b>Название</b> - <i>{i.title}</i>\n"
+                                    f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                    f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                    f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
+                                    f"<b>Ссылка</b> - <i>{i.link}</i>\n"
+                                    f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
+                                    f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                    f"<b>Клики</b> - <i>{i.click}</i>")
+                        page += 1
+                    if len(book) == 10:
+                        break
+                if len(book) == 10:
+                    break
+            data["page"] = page
+            for i in book:
+                await bot.send_message(callback.from_user.id,
+                                       i,
+                                       disable_web_page_preview=True)
+
+            await bot.send_message(callback.from_user.id,
+                                   "Следующая страница",
+                                   reply_markup=pagination.admin_check_next_page_ozon())
+
+
+class AdminCheckWb:
+    @staticmethod
+    async def admin_check_wb(callback: types.CallbackQuery):
+        await callback.message.edit_text(text="Загрузить в Excel или просмотреть тут ?",
+                                         reply_markup=pagination.admin_check_wb())
+
+    @staticmethod
+    async def admin_check_wb_excel(callback: types.CallbackQuery):
+        all_products = await general_get.products_wb_all()
+        with open("table_wildberries.csv", "w", newline='', encoding="windows_1251") as file:
+            writer = csv.writer(file)
+            writer.writerow(["id", "Наименование", "Категория", "Артикул продавца",
+                             "Артикул товара", "Цена с учетом СПП", "Ссылка", "Фото", "Клики"])
+            for i in all_products:
+                writer.writerow([i.id, i.title, i.type_product, i.article_seller,
+                                 i.article_product, i.price_spp, i.link, i.photo, i.click])
+        table_wb = InputFile("table_wildberries.csv")
+        await bot.send_document(chat_id=callback.from_user.id,
+                                document=table_wb)
+
+    @staticmethod
+    async def admin_check_wb_tg(callback: types.CallbackQuery, state: FSMContext):
+        items = await general_get.products_wb_all()
+        book = []
+        page = 1
+        while True:
+            for i in items:
+                if int(i.id) == page:
+                    book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                f"<b>Название</b> - <i>{i.title}</i>\n"
+                                f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                f"<b>Артикул продавца</b> - <i>{i.article_seller}</i>\n"
+                                f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
+                                f"<b>Ссылка</b> - <i>{i.link}</i>\n"
+                                f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                f"<b>Клики</b> - <i>{i.click}</i>")
+                    page += 1
+                if len(book) == 10:
+                    break
+            if len(book) == 10:
+                break
+        for i in book:
+            await bot.send_message(callback.from_user.id,
+                                   i,
+                                   disable_web_page_preview=True)
+        async with state.proxy() as data:
+            data["page"] = page
+            data["items"] = items
+        await bot.send_message(callback.from_user.id,
+                               "Следующая страница",
+                               reply_markup=pagination.admin_check_next_page_wb())
+
+    @staticmethod
+    async def admin_check_wb_tg_next(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            page = data.get("page")
+            items = data.get("items")
+            book = []
+            while True:
+                for i in items:
+                    if int(i.id) == page:
+                        book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                    f"<b>Название</b> - <i>{i.title}</i>\n"
+                                    f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                    f"<b>Артикул продавца</b> - <i>{i.article_seller}</i>\n"
+                                    f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                    f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
+                                    f"<b>Ссылка</b> - <i>{i.link}</i>\n"
+                                    f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                    f"<b>Клики</b> - <i>{i.click}</i>")
+                        page += 1
+                    if len(book) == 10:
+                        break
+                if len(book) == 10:
+                    break
+            data["page"] = page
+            for i in book:
+                await bot.send_message(callback.from_user.id,
+                                       i,
+                                       disable_web_page_preview=True)
+
+            await bot.send_message(callback.from_user.id,
+                                   "Следующая страница",
+                                   reply_markup=pagination.admin_check_next_page_wb())
 
 
 class AdminOzon:
