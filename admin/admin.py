@@ -94,5 +94,93 @@ class AdminOzon:
                                                           data.get('link_utm'),
                                                           data.get('photo'))
         await bot.send_message(callback.from_user.id,
-                               "Товар успешно добавился!")
+                               "Товар Ozon успешно добавился!")
+        await state.finish()
+
+
+class AdminWb:
+    @staticmethod
+    async def title_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["title"] = message.text
+        await bot.send_message(message.from_user.id,
+                               f"<b>Название</b> - {message.text}\n\n"
+                               f"<b>Теперь введите Категорию товара</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def type_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["type_product"] = message.text
+        await bot.send_message(message.from_user.id,
+                               f"<b>Категория</b> - {message.text}\n\n"
+                               f"<b>Теперь введите Артикул продавца</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def article_seller_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["article_seller"] = message.text
+        await bot.send_message(message.from_user.id,
+                               f"<b>Артикул продавца</b> - {message.text}\n\n"
+                               f"<b>Теперь введите артикул товара</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def article_product_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["article_product"] = message.text
+        await bot.send_message(message.from_user.id,
+                               f"<b>Артикул товара</b> - {message.text}\n\n"
+                               f"<b>Теперь введите цену с учетом СПП</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def price_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["price_spp"] = message.text
+        await bot.send_message(message.from_user.id,
+                               f"<b>Цена с учетом СПП</b> - {message.text}\n\n"
+                               f"<b>Теперь введите ссылку на товар</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def link_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data["link"] = message.text
+            data["photo"] = []
+        await bot.send_message(message.from_user.id,
+                               f"<b>Ссылка</b> - {message.text}\n\n"
+                               f"<b>Теперь введите ссылку на фото</b>")
+        await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def photo_wb(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            data.get("photo").append(message.text)
+        await bot.send_message(message.from_user.id,
+                               f"<b>Название</b> - {data.get('title')}\n"
+                               f"<b>Категория</b> - {data.get('type_product')}\n"
+                               f"<b>Артикул продавца</b> - {data.get('article_seller')}\n"
+                               f"<b>Артикул товара</b> - {data.get('article_product')}\n"
+                               f"<b>Цена</b> - {data.get('price')}\n"
+                               f"<b>Ссылка</b> - {data.get('link')}\n"
+                               f"<b>Фото</b> - {data.get('photo')}\n\n"
+                               f"<b>Вы можете еще раз сюда ввести ссылку на Фото чтобы Добавить несколько Фото "
+                               f"или нажмите Завершить</b>",
+                               reply_markup=pagination.admin_done_wb(),
+                               disable_web_page_preview=True)
+
+    @staticmethod
+    async def wb_finish(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            await general_set.product_wb_add_with_photo(data.get('title'),
+                                                        data.get('type_product'),
+                                                        data.get('article_seller'),
+                                                        int(data.get('article_product')),
+                                                        int(data.get('price_spp')),
+                                                        data.get('link'),
+                                                        data.get('photo'))
+        await bot.send_message(callback.from_user.id,
+                               "Товар Wildberries успешно добавился!")
         await state.finish()

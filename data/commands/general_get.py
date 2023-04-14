@@ -26,3 +26,8 @@ async def products_ozon_all():
 async def product_ozon_select(product_id):
     product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
     return product_ozon
+
+
+async def product_wb_select(product_id):
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    return product_wb

@@ -8,7 +8,7 @@ from aiogram.dispatcher import FSMContext
 from bot import dp, bot
 from data.commands import general_set, general_get
 from admin import register_admin_handler
-from states import AdminStatesOzon
+from states import AdminStatesOzon, AdminStatesWb
 from content import get_products_ozon_all, get_item_ozon, get_page_ozon, get_products_ozon_all_text
 from markups.pagination import pagination_call, get_page_keyboard, see_all_products_markup
 
@@ -31,27 +31,54 @@ async def show_items_handler(message: types.Message):
                                    message.from_user.last_name)
     product_id = message.text.split()
     if len(product_id) == 2:
-        product = await general_get.product_ozon_select(int(message.text.split()[1]))
-        try:
-            media = types.MediaGroup()
-            for i in product.photo:
-                media.attach_photo(i)
-            await bot.send_media_group(message.from_user.id,
-                                       media=media,
-                                       )
-            await bot.send_message(message.from_user.id,
-                                   f"<b>Название</b> - <i>{product.title}</i>\n"
-                                   f"<b>Категория</b> - <i>{product.type_product}</i>\n"
-                                   f"<b>Артикль товара</b> - <i>{product.article_product}</i>\n"
-                                   f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
-                                   f"<b>Ссылка</b> - <i>{product.link_utm}</i>\n")
-        except:
-            await bot.send_message(message.from_user.id,
-                                   f"<b>Название</b> - <i>{product.title}</i>\n"
-                                   f"<b>Категория</b> - <i>{product.type_product}</i>\n"
-                                   f"<b>Артикль товара</b> - <i>{product.article_product}</i>\n"
-                                   f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
-                                   f"<b>Ссылка</b> - <i>{product.link_utm}</i>\n")
+        product = product_id[1].split("_")
+        if product[0] == "ozon":
+            product_ozon = await general_get.product_ozon_select(int(product[1]))
+            try:
+                media = types.MediaGroup()
+                for i in product_ozon.photo:
+                    media.attach_photo(i)
+                await bot.send_media_group(message.from_user.id,
+                                           media=media,
+                                           )
+                await bot.send_message(message.from_user.id,
+                                       f"<b>Название</b> - <i>{product_ozon.title}</i>\n"
+                                       f"<b>Категория</b> - <i>{product_ozon.type_product}</i>\n"
+                                       f"<b>Артикул товара</b> - <i>{product_ozon.article_product}</i>\n"
+                                       f"<b>Цена</b> - <i>{product_ozon.price} руб.</i>\n"
+                                       f"<b>Ссылка</b> - <i>{product_ozon.link_utm}</i>\n")
+            except:
+                await bot.send_message(message.from_user.id,
+                                       f"<b>Название</b> - <i>{product_ozon.title}</i>\n"
+                                       f"<b>Категория</b> - <i>{product_ozon.type_product}</i>\n"
+                                       f"<b>Артикул товара</b> - <i>{product_ozon.article_product}</i>\n"
+                                       f"<b>Цена</b> - <i>{product_ozon.price} руб.</i>\n"
+                                       f"<b>Ссылка</b> - <i>{product_ozon.link_utm}</i>\n")
+        if product[0] == "wb":
+            product_wb = await general_get.product_wb_select(int(product[1]))
+            try:
+                media = types.MediaGroup()
+                for i in product_wb.photo:
+                    media.attach_photo(i)
+                await bot.send_media_group(message.from_user.id,
+                                           media=media,
+                                           )
+                await bot.send_message(message.from_user.id,
+                                       f"<b>Название</b> - <i>{product_wb.title}</i>\n"
+                                       f"<b>Категория</b> - <i>{product_wb.type_product}</i>\n"
+                                       f"<b>Артикул продавца</b> - <i>{product_wb.article_seller}</i>\n"
+                                       f"<b>Артикул товара</b> - <i>{product_wb.article_product}</i>\n"
+                                       f"<b>Цена</b> - <i>{product_wb.price_spp} руб.</i>\n"
+                                       f"<b>Ссылка</b> - <i>{product_wb.link}</i>\n")
+            except:
+                await bot.send_message(message.from_user.id,
+                                       f"<b>Название</b> - <i>{product_wb.title}</i>\n"
+                                       f"<b>Категория</b> - <i>{product_wb.type_product}</i>\n"
+                                       f"<b>Артикул продавца</b> - <i>{product_wb.article_seller}</i>\n"
+                                       f"<b>Артикул товара</b> - <i>{product_wb.article_product}</i>\n"
+                                       f"<b>Цена</b> - <i>{product_wb.price_spp} руб.</i>\n"
+                                       f"<b>Ссылка</b> - <i>{product_wb.link}</i>\n")
+
     # elif len(product_id) == 1:
     #     items = await get_products_ozon_all()
     #     await bot.send_message(message.from_user.id,
@@ -60,7 +87,7 @@ async def show_items_handler(message: types.Message):
 
 
 @dp.message_handler(Command("admin_ozon"), state=["*"])
-async def admin_start(message: types.Message, state: FSMContext):
+async def admin_ozon(message: types.Message, state: FSMContext):
     admin = await general_get.admin_select(message.from_user.id)
     if not admin:
         await general_set.admin_add(message.from_user.id,
@@ -71,6 +98,20 @@ async def admin_start(message: types.Message, state: FSMContext):
                            "Добавляем товар из Ozon\n"
                            "Скиньте Название")
     await AdminStatesOzon.title.set()
+
+
+@dp.message_handler(Command("admin_wb"), state=["*"])
+async def admin_wb(message: types.Message, state: FSMContext):
+    admin = await general_get.admin_select(message.from_user.id)
+    if not admin:
+        await general_set.admin_add(message.from_user.id,
+                                    message.from_user.username,
+                                    message.from_user.first_name,
+                                    message.from_user.last_name)
+    await bot.send_message(message.from_user.id,
+                           "Добавляем товар из Wildberries\n"
+                           "Скиньте Название")
+    await AdminStatesWb.title.set()
 
 # @dp.message_handler(text_contains=f"Посмотреть все товары")
 # async def see_all_products(message: types.Message):

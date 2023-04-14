@@ -35,3 +35,10 @@ async def product_ozon_add_with_photo(title, type_product, article_product, pric
     product_ozon = ProductsOzon(title=title, type_product=type_product, article_product=article_product,
                                 price=price, link=link, link_utm=link_utm, photo=photo)
     await product_ozon.create()
+
+
+async def product_wb_add_with_photo(title, type_product, article_seller, article_product, price_spp, link, photo):
+    """Продукт Wildberries добавляется в БД"""
+    product_wb = ProductsWb(title=title, type_product=type_product, article_seller=article_seller,
+                            article_product=article_product, price_spp=price_spp, link=link, photo=photo)
+    await product_wb.create()

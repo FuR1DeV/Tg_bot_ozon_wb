@@ -58,3 +58,10 @@ def admin_done_ozon():
     approve_.insert(get)
     return approve_
 
+
+def admin_done_wb():
+    approve_ = InlineKeyboardMarkup()
+    get = InlineKeyboardButton(text='Завершить',
+                               callback_data='admin_wb_done')
+    approve_.insert(get)
+    return approve_
