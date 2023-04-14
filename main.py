@@ -10,9 +10,7 @@ from data.commands import general_set, general_get
 from admin import register_admin_handler
 from settings import config
 from states import AdminStatesOzon, AdminStatesWb
-from markups import pagination
-from content import get_products_ozon_all, get_item_ozon, get_page_ozon, get_products_ozon_all_text
-from markups.pagination import pagination_call, get_page_keyboard, see_all_products_markup
+from markups.admin_markup import AdminAddMarkup, AdminCheckMarkup
 
 
 @dp.message_handler(Command("getlink"))
@@ -106,26 +104,9 @@ async def admin(message: types.Message, state: FSMContext):
                                         message.from_user.first_name,
                                         message.from_user.last_name)
         await bot.send_message(message.from_user.id,
-                               "Вы можете просмотреть товары и редактировать их",
-                               reply_markup=pagination.admin_check())
-    else:
-        await bot.send_message(message.from_user.id, "У вас нет прав доступа!")
-
-
-@dp.message_handler(Command("admin_ozon"), state=["*"])
-async def admin_ozon(message: types.Message, state: FSMContext):
-    await state.finish()
-    if str(message.from_user.id) in config.ADMIN_ID:
-        admin_ = await general_get.admin_select(message.from_user.id)
-        if not admin_:
-            await general_set.admin_add(message.from_user.id,
-                                        message.from_user.username,
-                                        message.from_user.first_name,
-                                        message.from_user.last_name)
-        await bot.send_message(message.from_user.id,
-                               "Добавляем товар из Ozon\n"
-                               "Скиньте Название")
-        await AdminStatesOzon.title.set()
+                               "<b>Добро пожаловать в меню Администратора</b>\n"
+                               "<b>Вы можете просмотреть товары, загружать в Excel, редактировать и добавлять новые</b>",
+                               reply_markup=AdminCheckMarkup.admin_check())
     else:
         await bot.send_message(message.from_user.id, "У вас нет прав доступа!")
 

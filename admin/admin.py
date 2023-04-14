@@ -6,15 +6,24 @@ from aiogram.types import InputFile
 
 import states
 from bot import bot
-from markups import pagination
+from markups.admin_markup import AdminCheckMarkup, AdminAddMarkup
 from data.commands import general_set, general_get
+
+
+class AdminMain:
+    @staticmethod
+    async def admin_main(callback: types.CallbackQuery):
+        await callback.message.edit_text(
+            "<b>Добро пожаловать в меню Администратора</b>\n"
+            "<b>Вы можете просмотреть товары, загружать в Excel, редактировать и добавлять новые</b>",
+            reply_markup=AdminCheckMarkup.admin_check())
 
 
 class AdminCheckOzon:
     @staticmethod
     async def admin_check_ozon(callback: types.CallbackQuery):
-        await callback.message.edit_text(text="Загрузить в Excel или просмотреть тут ?",
-                                         reply_markup=pagination.admin_check_ozon())
+        await callback.message.edit_text(text="<b>Вы в меню Ozon</b>",
+                                         reply_markup=AdminCheckMarkup.admin_check_ozon())
 
     @staticmethod
     async def admin_check_ozon_excel(callback: types.CallbackQuery):
@@ -43,25 +52,21 @@ class AdminCheckOzon:
                                 f"<b>Категория</b> - <i>{i.type_product}</i>\n"
                                 f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                 f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
-                                f"<b>Ссылка</b> - <i>{i.link}</i>\n"
                                 f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
                                 f"<b>Фото</b> - <i>{i.photo}</i>\n"
-                                f"<b>Клики</b> - <i>{i.click}</i>")
+                                f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
-                if len(book) == 10:
+                if len(book) == 5:
                     break
-            if len(book) == 10:
+            if len(book) == 5:
                 break
-        for i in book:
-            await bot.send_message(callback.from_user.id,
-                                   i,
-                                   disable_web_page_preview=True)
+        await callback.message.edit_text("".join(book),
+                                         disable_web_page_preview=True,
+                                         reply_markup=AdminCheckMarkup.admin_check_next_page_ozon())
         async with state.proxy() as data:
             data["page"] = page
             data["items"] = items
-        await bot.send_message(callback.from_user.id,
-                               "Следующая страница",
-                               reply_markup=pagination.admin_check_next_page_ozon())
+            data["max_page"] = len(items)
 
     @staticmethod
     async def admin_check_ozon_tg_next(callback: types.CallbackQuery, state: FSMContext):
@@ -69,6 +74,7 @@ class AdminCheckOzon:
             page = data.get("page")
             items = data.get("items")
             book = []
+            max_page = data.get("max_page")
             while True:
                 for i in items:
                     if int(i.id) == page:
@@ -77,31 +83,30 @@ class AdminCheckOzon:
                                     f"<b>Категория</b> - <i>{i.type_product}</i>\n"
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                     f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
-                                    f"<b>Ссылка</b> - <i>{i.link}</i>\n"
                                     f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
                                     f"<b>Фото</b> - <i>{i.photo}</i>\n"
-                                    f"<b>Клики</b> - <i>{i.click}</i>")
+                                    f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
-                    if len(book) == 10:
+                    if len(book) == 5:
                         break
-                if len(book) == 10:
+                if len(book) == 5 or max_page - page < 5:
                     break
             data["page"] = page
-            for i in book:
+            if book:
+                await callback.message.edit_text("".join(book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=AdminCheckMarkup.admin_check_next_page_ozon())
+            else:
+                await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,
-                                       i,
-                                       disable_web_page_preview=True)
-
-            await bot.send_message(callback.from_user.id,
-                                   "Следующая страница",
-                                   reply_markup=pagination.admin_check_next_page_ozon())
+                                       "Больше товаров нет!")
 
 
 class AdminCheckWb:
     @staticmethod
     async def admin_check_wb(callback: types.CallbackQuery):
-        await callback.message.edit_text(text="Загрузить в Excel или просмотреть тут ?",
-                                         reply_markup=pagination.admin_check_wb())
+        await callback.message.edit_text(text="<b>Вы в меню Wildberries</b>",
+                                         reply_markup=AdminCheckMarkup.admin_check_wb())
 
     @staticmethod
     async def admin_check_wb_excel(callback: types.CallbackQuery):
@@ -133,22 +138,19 @@ class AdminCheckWb:
                                 f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                 f"<b>Ссылка</b> - <i>{i.link}</i>\n"
                                 f"<b>Фото</b> - <i>{i.photo}</i>\n"
-                                f"<b>Клики</b> - <i>{i.click}</i>")
+                                f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
-                if len(book) == 10:
+                if len(book) == 5:
                     break
-            if len(book) == 10:
+            if len(book) == 5:
                 break
-        for i in book:
-            await bot.send_message(callback.from_user.id,
-                                   i,
-                                   disable_web_page_preview=True)
+        await callback.message.edit_text("".join(book),
+                                         disable_web_page_preview=True,
+                                         reply_markup=AdminCheckMarkup.admin_check_next_page_wb())
         async with state.proxy() as data:
             data["page"] = page
             data["items"] = items
-        await bot.send_message(callback.from_user.id,
-                               "Следующая страница",
-                               reply_markup=pagination.admin_check_next_page_wb())
+            data["max_page"] = len(items)
 
     @staticmethod
     async def admin_check_wb_tg_next(callback: types.CallbackQuery, state: FSMContext):
@@ -156,6 +158,7 @@ class AdminCheckWb:
             page = data.get("page")
             items = data.get("items")
             book = []
+            max_page = data.get("max_page")
             while True:
                 for i in items:
                     if int(i.id) == page:
@@ -167,32 +170,39 @@ class AdminCheckWb:
                                     f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                     f"<b>Ссылка</b> - <i>{i.link}</i>\n"
                                     f"<b>Фото</b> - <i>{i.photo}</i>\n"
-                                    f"<b>Клики</b> - <i>{i.click}</i>")
+                                    f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
-                    if len(book) == 10:
+                    if len(book) == 5:
                         break
-                if len(book) == 10:
+                if len(book) == 5 or max_page - page < 5:
                     break
             data["page"] = page
-            for i in book:
+            if book:
+                await callback.message.edit_text("".join(book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=AdminCheckMarkup.admin_check_next_page_wb())
+            else:
+                await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,
-                                       i,
-                                       disable_web_page_preview=True)
-
-            await bot.send_message(callback.from_user.id,
-                                   "Следующая страница",
-                                   reply_markup=pagination.admin_check_next_page_wb())
+                                       "Больше товаров нет!")
 
 
-class AdminOzon:
+class AdminOzonAddProduct:
+
     @staticmethod
-    async def title_ozon(message: types.Message, state: FSMContext):
+    async def admin_ozon_add_product(callback: types.CallbackQuery):
+        await callback.message.edit_text("Добавляем товар из Ozon\n"
+                                         "Введите <b>Название</b>",
+                                         reply_markup=AdminAddMarkup.admin_add_ozon_next())
+    await states.AdminStatesOzon.title.set()
+
+    @staticmethod
+    async def title_ozon(callback: types.CallbackQuery, state: FSMContext):
         async with state.proxy() as data:
-            data["title"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Название</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Категорию товара</b>")
-        await states.AdminStatesOzon.next()
+            data["title"] = callback.message.text
+        await callback.message.edit_text(f"<b>Название</b> - {callback.message.text}\n\n"
+                                         f"<b>Теперь введите Категорию товара</b>")
+        await states.AdminStatesOzon.title.set()
 
     @staticmethod
     async def type_ozon(message: types.Message, state: FSMContext):
@@ -254,7 +264,7 @@ class AdminOzon:
                                f"<b>Фото</b> - {data.get('photo')}\n\n"
                                f"<b>Вы можете еще раз сюда ввести ссылку на Фото чтобы Добавить несколько Фото "
                                f"или нажмите Завершить</b>",
-                               reply_markup=pagination.admin_done_ozon(),
+                               reply_markup=AdminCheckMarkup.admin_done_ozon(),
                                disable_web_page_preview=True)
 
     @staticmethod
@@ -342,7 +352,7 @@ class AdminWb:
                                f"<b>Фото</b> - {data.get('photo')}\n\n"
                                f"<b>Вы можете еще раз сюда ввести ссылку на Фото чтобы Добавить несколько Фото "
                                f"или нажмите Завершить</b>",
-                               reply_markup=pagination.admin_done_wb(),
+                               reply_markup=AdminCheckMarkup.admin_done_wb(),
                                disable_web_page_preview=True)
 
     @staticmethod
