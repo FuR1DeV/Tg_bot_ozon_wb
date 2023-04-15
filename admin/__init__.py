@@ -109,7 +109,11 @@ def register_admin_handler(disp: Dispatcher):
                                          state=["*"],
                                          text="admin_ozon_view")
     disp.register_message_handler(AdminOzonView.admin_ozon_enter_id,
-                                  state=states.AdminChangeOzon)
+                                  state=states.AdminChangeOzon,
+                                  content_types=["photo", "text"])
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_back,
                                          state=["*"],
                                          text="admin_ozon_change_back")
+    # disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_menu,
+    #                                      state=["*"],
+    #                                      text="admin_ozon_change_menu")

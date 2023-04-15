@@ -644,14 +644,83 @@ class AdminOzonView:
                                reply_markup=AdminCheckMarkup.admin_check_ozon())
 
     @staticmethod
-    async def admin_ozon_enter_id(message: types.Message):
+    async def admin_ozon_enter_id(message: types.Message, state: FSMContext):
         await bot.delete_message(message.from_user.id, message.message_id)
         await bot.delete_message(message.from_user.id, message.message_id - 1)
-        if message.text.isdigit():
+        if message.photo:
+            async with state.proxy() as data:
+                product = data.get("product")
+                for i in range(0, 5):
+                    try:
+                        await bot.delete_message(message.from_user.id, message.message_id - i)
+                    except:
+                        pass
+                max_ = await general_set.product_ozon_add_photo(product.id, message.photo[2].file_id)
+                if max_:
+                    product = await general_get.product_ozon_select(product.id)
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    text = "<b>У вас 3 Фотографии</b>\n" \
+                           "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                           "<b>Редактировать Товар:</b>"
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
+                                           f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewMarkup.admin_in_product())
+                else:
+                    product = await general_get.product_ozon_select(product.id)
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    if len(product.photo) >= 3:
+                        text = "<b>У вас 3 Фотографии</b>\n" \
+                               "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    if len(product.photo) == 2:
+                        text = "<b>У вас 2 Фотографии</b>\n" \
+                               "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    elif len(product.photo) == 1:
+                        text = "<b>У вас 1 Фотография</b>\n" \
+                               "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
+                                           f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewMarkup.admin_in_product())
+        elif message.text.isdigit():
             product_id = int(message.text)
             product = await general_get.product_ozon_select(product_id)
+            await state.update_data(product=product)
             if product:
                 if product.photo:
+                    if len(product.photo) >= 3:
+                        text = "<b>У вас 3 Фотографии</b>\n" \
+                               "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    if len(product.photo) == 2:
+                        text = "<b>У вас 2 Фотографии</b>\n" \
+                               "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    elif len(product.photo) == 1:
+                        text = "<b>У вас 1 Фотография</b>\n" \
+                               "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
                     media = types.MediaGroup()
                     for i in product.photo:
                         media.attach_photo(i)
@@ -664,13 +733,29 @@ class AdminOzonView:
                                            f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
                                            f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
                                            f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
-                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n",
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewMarkup.admin_in_product())
+                else:
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>Товар без Фото!</b>\n"
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
+                                           f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n"
+                                           f"<b>У вас нет Фотографий!</b>\n"
+                                           f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
                                            reply_markup=AdminViewMarkup.admin_in_product())
             else:
                 await bot.send_message(message.from_user.id,
                                        "Товар Ozon не найден!",
                                        reply_markup=AdminCheckMarkup.admin_check_ozon())
-        else:
+        elif not message.text.isdigit():
             await bot.send_message(message.from_user.id,
                                    "Надо ввести цифру!",
                                    reply_markup=AdminCheckMarkup.admin_check_ozon())
+
+    # @staticmethod
+    # async def admin_ozon_change_menu

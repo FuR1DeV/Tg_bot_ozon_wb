@@ -139,7 +139,7 @@ class AdminAddMarkup:
     @staticmethod
     def admin_add_ozon_finish():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Отмена',
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Отмена',
                                     callback_data='admin_ozon_check')
         get2 = InlineKeyboardButton(text='Добавить',
                                     callback_data='admin_ozon_add_product')
@@ -158,7 +158,7 @@ class AdminAddMarkup:
     @staticmethod
     def admin_add_wb_finish():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Отмена',
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Отмена',
                                     callback_data='admin_wb_check')
         get2 = InlineKeyboardButton(text='Добавить',
                                     callback_data='admin_wb_add_product')
@@ -172,18 +172,30 @@ class AdminViewMarkup:
     @staticmethod
     def admin_enter_id_ozon():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Назад',
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
                                     callback_data='admin_ozon_check')
         approve_.insert(get1)
         return approve_
 
     @staticmethod
     def admin_in_product():
-        approve_ = InlineKeyboardMarkup()
-        get1 = InlineKeyboardButton(text='Назад',
+        approve_ = InlineKeyboardMarkup(row_width=2)
+        get0 = InlineKeyboardButton(text='Наименование',
+                                    callback_data='admin_ozon_change_menu')
+        get1 = InlineKeyboardButton(text='Категорию',
+                                    callback_data='admin_ozon_change_menu')
+        get2 = InlineKeyboardButton(text='Артикул',
+                                    callback_data='admin_ozon_change_menu')
+        get3 = InlineKeyboardButton(text='Цену',
+                                    callback_data='admin_ozon_change_menu')
+        get4 = InlineKeyboardButton(text='Ссылку UTM',
+                                    callback_data='admin_ozon_change_menu')
+        get5 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
                                     callback_data='admin_ozon_change_back')
-        get2 = InlineKeyboardButton(text='Редактировать',
-                                    callback_data='admin_ozon_change')
+        approve_.insert(get0)
         approve_.insert(get1)
         approve_.insert(get2)
+        approve_.insert(get3)
+        approve_.insert(get4)
+        approve_.insert(get5)
         return approve_
