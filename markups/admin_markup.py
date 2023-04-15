@@ -90,11 +90,17 @@ class AdminCheckMarkup:
                                    callback_data='admin_wb_excel')
         get1 = InlineKeyboardButton(text='Посмотреть все товары WB',
                                     callback_data='admin_wb_tg')
-        get2 = InlineKeyboardButton(text='Главное меню',
+        get2 = InlineKeyboardButton(text='Редактировать Товар',
+                                    callback_data='admin_wb_change')
+        get3 = InlineKeyboardButton(text='Добавить Товар',
+                                    callback_data='admin_wb_add')
+        get4 = InlineKeyboardButton(text='Главное Меню',
                                     callback_data='admin_main')
         approve_.insert(get)
         approve_.insert(get1)
         approve_.insert(get2)
+        approve_.insert(get3)
+        approve_.insert(get4)
         return approve_
 
     @staticmethod
@@ -123,12 +129,28 @@ class AdminCheckMarkup:
 class AdminAddMarkup:
 
     @staticmethod
-    def admin_add_ozon_next():
+    def admin_add_ozon():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get = InlineKeyboardButton(text='Следующий шаг',
-                                   callback_data='admin_add_ozon_next')
-        get1 = InlineKeyboardButton(text='Назад в меню',
+        get1 = InlineKeyboardButton(text='Отмена',
                                     callback_data='admin_ozon_check')
-        approve_.insert(get)
+        approve_.insert(get1)
+        return approve_
+
+    @staticmethod
+    def admin_add_ozon_finish():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text='Отмена',
+                                    callback_data='admin_ozon_check')
+        get2 = InlineKeyboardButton(text='Добавить',
+                                    callback_data='admin_ozon_add_product')
+        approve_.insert(get1)
+        approve_.insert(get2)
+        return approve_
+
+    @staticmethod
+    def admin_add_wb():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text='Назад в меню',
+                                    callback_data='admin_wb_check')
         approve_.insert(get1)
         return approve_

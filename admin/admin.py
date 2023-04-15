@@ -2,7 +2,7 @@ import csv
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import InputFile
+from aiogram.types import InputFile, InputMediaPhoto
 
 import states
 from bot import bot
@@ -12,18 +12,20 @@ from data.commands import general_set, general_get
 
 class AdminMain:
     @staticmethod
-    async def admin_main(callback: types.CallbackQuery):
+    async def admin_main(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text(
             "<b>Добро пожаловать в меню Администратора</b>\n"
             "<b>Вы можете просмотреть товары, загружать в Excel, редактировать и добавлять новые</b>",
             reply_markup=AdminCheckMarkup.admin_check())
+        await state.finish()
 
 
 class AdminCheckOzon:
     @staticmethod
-    async def admin_check_ozon(callback: types.CallbackQuery):
+    async def admin_check_ozon(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text(text="<b>Вы в меню Ozon</b>",
                                          reply_markup=AdminCheckMarkup.admin_check_ozon())
+        await state.finish()
 
     @staticmethod
     async def admin_check_ozon_excel(callback: types.CallbackQuery):
@@ -99,14 +101,17 @@ class AdminCheckOzon:
             else:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,
-                                       "Больше товаров нет!")
+                                       "<b>Больше товаров нет!</b>\n"
+                                       "<b>Вы в меню Ozon</b>",
+                                       reply_markup=AdminCheckMarkup.admin_check_ozon())
 
 
 class AdminCheckWb:
     @staticmethod
-    async def admin_check_wb(callback: types.CallbackQuery):
+    async def admin_check_wb(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text(text="<b>Вы в меню Wildberries</b>",
                                          reply_markup=AdminCheckMarkup.admin_check_wb())
+        await state.finish()
 
     @staticmethod
     async def admin_check_wb_excel(callback: types.CallbackQuery):
@@ -184,7 +189,9 @@ class AdminCheckWb:
             else:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,
-                                       "Больше товаров нет!")
+                                       "<b>Больше товаров нет!</b>\n"
+                                       "<b>Вы в меню Wildberries</b>",
+                                       reply_markup=AdminCheckMarkup.admin_check_wb())
 
 
 class AdminOzonAddProduct:
@@ -192,80 +199,180 @@ class AdminOzonAddProduct:
     @staticmethod
     async def admin_ozon_add_product(callback: types.CallbackQuery):
         await callback.message.edit_text("Добавляем товар из Ozon\n"
-                                         "Введите <b>Название</b>",
-                                         reply_markup=AdminAddMarkup.admin_add_ozon_next())
-    await states.AdminStatesOzon.title.set()
+                                         "Введите <b>Наименование</b>",
+                                         reply_markup=AdminAddMarkup.admin_add_ozon())
+        await states.AdminStatesOzon.title.set()
 
     @staticmethod
-    async def title_ozon(callback: types.CallbackQuery, state: FSMContext):
-        async with state.proxy() as data:
-            data["title"] = callback.message.text
-        await callback.message.edit_text(f"<b>Название</b> - {callback.message.text}\n\n"
-                                         f"<b>Теперь введите Категорию товара</b>")
-        await states.AdminStatesOzon.title.set()
+    async def title_ozon(message: types.Message, state: FSMContext):
+        if message.text:
+            await state.update_data(title=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите Категорию товара</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon())
+            await states.AdminStatesOzon.next()
 
     @staticmethod
     async def type_ozon(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["type_product"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Категория</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Артикул</b>")
-        await states.AdminStatesOzon.next()
+            title = data.get("title")
+        if message.text:
+            await state.update_data(type_product=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите Артикул</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon())
+            await states.AdminStatesOzon.next()
 
     @staticmethod
     async def article_ozon(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["article_product"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Артикул</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Цену</b>")
-        await states.AdminStatesOzon.next()
+            title = data.get("title")
+            type_product = data.get("type_product")
+        if message.text:
+            await state.update_data(article_product=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите цену</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon())
+            await states.AdminStatesOzon.next()
 
     @staticmethod
     async def price_ozon(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["price"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Цена</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Обычную ссылку (без UTM)</b>")
-        await states.AdminStatesOzon.next()
-
-    @staticmethod
-    async def link_ozon(message: types.Message, state: FSMContext):
-        async with state.proxy() as data:
-            data["link"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Ссылка</b> - {message.text}\n\n"
-                               f"<b>Теперь введите ссылку с UTM</b>")
-        await states.AdminStatesOzon.next()
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_product = data.get("article_product")
+        if message.text:
+            await state.update_data(price=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{article_product}</i>\n"
+                                   f"<b>Цена</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите ссылку UTM</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesOzon.next()
 
     @staticmethod
     async def link_utm_ozon(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["link_utm"] = message.text
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_product = data.get("article_product")
+            price = data.get("price")
             data["photo"] = []
-        await bot.send_message(message.from_user.id,
-                               f"<b>Ссылка c UTM</b> - {message.text}\n\n"
-                               f"<b>Теперь введите ссылку на фото</b>")
+        if message.text:
+            await state.update_data(link_utm=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{article_product}</i>\n"
+                                   f"<b>Цена</b> - <i>{price}</i>\n"
+                                   f"<b>Ссылка UTM</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь загрузите Фото</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesOzon.next()
+
+    @staticmethod
+    async def photo_ozon_1(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_product = data.get("article_product")
+            price = data.get("price")
+            link_utm = data.get("link_utm")
+        if message.photo:
+            async with state.proxy() as data:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+        text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+               f"<b>Категория</b> - <i>{type_product}</i>\n" \
+               f"<b>Артикул товара</b> - <i>{article_product}</i>\n" \
+               f"<b>Цена</b> - <i>{price}</i>\n" \
+               f"<b>Ссылка UTM</b> - <i>{link_utm}</i>\n\n" \
+               f"<b>Вы можете еще добавить 2 Фото</b>"
+        await message.answer_photo(message.photo[2].file_id,
+                                   caption=text,
+                                   reply_markup=AdminAddMarkup.admin_add_ozon_finish())
         await states.AdminStatesOzon.next()
 
     @staticmethod
-    async def photo_ozon(message: types.Message, state: FSMContext):
+    async def photo_ozon_2(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data.get("photo").append(message.text)
-        await bot.send_message(message.from_user.id,
-                               f"<b>Название</b> - {data.get('title')}\n"
-                               f"<b>Категория</b> - {data.get('type_product')}\n"
-                               f"<b>Артикул</b> - {data.get('article_product')}\n"
-                               f"<b>Цена</b> - {data.get('price')}\n"
-                               f"<b>Ссылка</b> - {data.get('link')}\n"
-                               f"<b>Ссылка</b> UTM - {data.get('link_utm')}\n"
-                               f"<b>Фото</b> - {data.get('photo')}\n\n"
-                               f"<b>Вы можете еще раз сюда ввести ссылку на Фото чтобы Добавить несколько Фото "
-                               f"или нажмите Завершить</b>",
-                               reply_markup=AdminCheckMarkup.admin_done_ozon(),
-                               disable_web_page_preview=True)
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_product = data.get("article_product")
+            price = data.get("price")
+            link_utm = data.get("link_utm")
+            if message.photo:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+            text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+                   f"<b>Категория</b> - <i>{type_product}</i>\n" \
+                   f"<b>Артикул товара</b> - <i>{article_product}</i>\n" \
+                   f"<b>Цена</b> - <i>{price}</i>\n" \
+                   f"<b>Ссылка UTM</b> - <i>{link_utm}</i>\n\n" \
+                   f"<b>У вас 2 Фотографии, можете добавить еще 1</b>"
+            media = types.MediaGroup()
+            for i in data.get("photo"):
+                media.attach_photo(i)
+            await bot.send_media_group(message.from_user.id,
+                                       media=media)
+            await bot.send_message(message.from_user.id,
+                                   text,
+                                   reply_markup=AdminAddMarkup.admin_add_ozon_finish(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesOzon.next()
+
+    @staticmethod
+    async def photo_ozon_3(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_product = data.get("article_product")
+            price = data.get("price")
+            link_utm = data.get("link_utm")
+            if message.photo:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+                await bot.delete_message(message.from_user.id, message.message_id - 2)
+                await bot.delete_message(message.from_user.id, message.message_id - 3)
+            text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+                   f"<b>Категория</b> - <i>{type_product}</i>\n" \
+                   f"<b>Артикул товара</b> - <i>{article_product}</i>\n" \
+                   f"<b>Цена</b> - <i>{price}</i>\n" \
+                   f"<b>Ссылка UTM</b> - <i>{link_utm}</i>\n\n" \
+                   f"<b>У вас 3 фотографии, теперь жмите Добавить</b>"
+            media = types.MediaGroup()
+            for i in data.get("photo"):
+                media.attach_photo(i)
+            await bot.send_media_group(message.from_user.id,
+                                       media=media)
+            await bot.send_message(message.from_user.id,
+                                   text,
+                                   reply_markup=AdminAddMarkup.admin_add_ozon_finish(),
+                                   disable_web_page_preview=True)
+        await states.AdminStatesOzon.next()
 
     @staticmethod
     async def ozon_finish(callback: types.CallbackQuery, state: FSMContext):
@@ -274,11 +381,16 @@ class AdminOzonAddProduct:
                                                           data.get('type_product'),
                                                           int(data.get('article_product')),
                                                           int(data.get('price')),
-                                                          data.get('link'),
+                                                          "Ссылки нет",
                                                           data.get('link_utm'),
                                                           data.get('photo'))
+        await bot.delete_message(callback.from_user.id, callback.message.message_id)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 1)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 2)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 3)
         await bot.send_message(callback.from_user.id,
-                               "Товар Ozon успешно добавился!")
+                               "Товар Ozon успешно добавился!",
+                               reply_markup=AdminCheckMarkup.admin_check_ozon())
         await state.finish()
 
 

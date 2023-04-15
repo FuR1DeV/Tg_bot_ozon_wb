@@ -6,9 +6,11 @@ class AdminStatesOzon(StatesGroup):
     type_product: State = State()
     article_product: State = State()
     price: State = State()
-    link: State = State()
     link_utm: State = State()
-    photo: State = State()
+    photo_ozon_1: State = State()
+    photo_ozon_2: State = State()
+    photo_ozon_3: State = State()
+    photo_finish: State = State()
 
 
 class AdminStatesWb(StatesGroup):

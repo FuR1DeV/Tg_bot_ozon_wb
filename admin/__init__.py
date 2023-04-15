@@ -7,7 +7,6 @@ from states import AdminStatesOzon, AdminStatesWb
 
 
 def register_admin_handler(disp: Dispatcher):
-
     """Admin Main"""
 
     disp.register_callback_query_handler(AdminMain.admin_main,
@@ -49,3 +48,25 @@ def register_admin_handler(disp: Dispatcher):
     disp.register_callback_query_handler(AdminOzonAddProduct.admin_ozon_add_product,
                                          state=["*"],
                                          text="admin_ozon_add")
+    disp.register_message_handler(AdminOzonAddProduct.title_ozon,
+                                  state=AdminStatesOzon.title)
+    disp.register_message_handler(AdminOzonAddProduct.type_ozon,
+                                  state=AdminStatesOzon.type_product)
+    disp.register_message_handler(AdminOzonAddProduct.article_ozon,
+                                  state=AdminStatesOzon.article_product)
+    disp.register_message_handler(AdminOzonAddProduct.price_ozon,
+                                  state=AdminStatesOzon.price)
+    disp.register_message_handler(AdminOzonAddProduct.link_utm_ozon,
+                                  state=AdminStatesOzon.link_utm)
+    disp.register_message_handler(AdminOzonAddProduct.photo_ozon_1,
+                                  state=AdminStatesOzon.photo_ozon_1,
+                                  content_types=["photo"])
+    disp.register_message_handler(AdminOzonAddProduct.photo_ozon_2,
+                                  state=AdminStatesOzon.photo_ozon_2,
+                                  content_types=["photo"])
+    disp.register_message_handler(AdminOzonAddProduct.photo_ozon_3,
+                                  state=AdminStatesOzon.photo_ozon_3,
+                                  content_types=["photo"])
+    disp.register_callback_query_handler(AdminOzonAddProduct.ozon_finish,
+                                         state=["*"],
+                                         text="admin_ozon_add_product")
