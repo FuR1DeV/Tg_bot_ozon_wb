@@ -70,8 +70,8 @@ class AdminCheckMarkup:
                                    callback_data='admin_ozon_excel')
         get1 = InlineKeyboardButton(text='Посмотреть все Товары',
                                     callback_data='admin_ozon_tg')
-        get2 = InlineKeyboardButton(text='Редактировать Товар',
-                                    callback_data='admin_ozon_change')
+        get2 = InlineKeyboardButton(text='Просмотр Товара',
+                                    callback_data='admin_ozon_view')
         get3 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_ozon_add')
         get4 = InlineKeyboardButton(text='Главное Меню',
@@ -90,7 +90,7 @@ class AdminCheckMarkup:
                                    callback_data='admin_wb_excel')
         get1 = InlineKeyboardButton(text='Посмотреть все товары WB',
                                     callback_data='admin_wb_tg')
-        get2 = InlineKeyboardButton(text='Редактировать Товар',
+        get2 = InlineKeyboardButton(text='Просмотр Товара',
                                     callback_data='admin_wb_change')
         get3 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_wb_add')
@@ -131,7 +131,7 @@ class AdminAddMarkup:
     @staticmethod
     def admin_add_ozon():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Отмена',
+        get1 = InlineKeyboardButton(text='Назад',
                                     callback_data='admin_ozon_check')
         approve_.insert(get1)
         return approve_
@@ -150,7 +150,7 @@ class AdminAddMarkup:
     @staticmethod
     def admin_add_wb():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Отмена',
+        get1 = InlineKeyboardButton(text='Назад',
                                     callback_data='admin_wb_check')
         approve_.insert(get1)
         return approve_
@@ -162,6 +162,28 @@ class AdminAddMarkup:
                                     callback_data='admin_wb_check')
         get2 = InlineKeyboardButton(text='Добавить',
                                     callback_data='admin_wb_add_product')
+        approve_.insert(get1)
+        approve_.insert(get2)
+        return approve_
+
+
+class AdminViewMarkup:
+
+    @staticmethod
+    def admin_enter_id_ozon():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text='Назад',
+                                    callback_data='admin_ozon_check')
+        approve_.insert(get1)
+        return approve_
+
+    @staticmethod
+    def admin_in_product():
+        approve_ = InlineKeyboardMarkup()
+        get1 = InlineKeyboardButton(text='Назад',
+                                    callback_data='admin_ozon_change_back')
+        get2 = InlineKeyboardButton(text='Редактировать',
+                                    callback_data='admin_ozon_change')
         approve_.insert(get1)
         approve_.insert(get2)
         return approve_

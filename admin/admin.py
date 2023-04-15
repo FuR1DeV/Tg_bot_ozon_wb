@@ -2,11 +2,11 @@ import csv
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import InputFile, InputMediaPhoto
+from aiogram.types import InputFile
 
 import states
 from bot import bot
-from markups.admin_markup import AdminCheckMarkup, AdminAddMarkup
+from markups.admin_markup import AdminCheckMarkup, AdminAddMarkup, AdminViewMarkup
 from data.commands import general_set, general_get
 
 
@@ -622,3 +622,55 @@ class AdminWbAddProduct:
                                "Товар Wildberries успешно добавился!",
                                reply_markup=AdminCheckMarkup.admin_check_wb())
         await state.finish()
+
+
+class AdminOzonView:
+
+    @staticmethod
+    async def admin_ozon_view(callback: types.CallbackQuery):
+        await callback.message.edit_text("Введите ID товара Ozon",
+                                         reply_markup=AdminViewMarkup.admin_enter_id_ozon())
+        await states.AdminChangeOzon.enter_id.set()
+
+    @staticmethod
+    async def admin_ozon_change_back(callback: types.CallbackQuery):
+        for i in range(0, 4):
+            try:
+                await bot.delete_message(callback.from_user.id, callback.message.message_id - i)
+            except:
+                pass
+        await bot.send_message(callback.from_user.id,
+                               "<b>Вы в меню Ozon</b>",
+                               reply_markup=AdminCheckMarkup.admin_check_ozon())
+
+    @staticmethod
+    async def admin_ozon_enter_id(message: types.Message):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        if message.text.isdigit():
+            product_id = int(message.text)
+            product = await general_get.product_ozon_select(product_id)
+            if product:
+                if product.photo:
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
+                                           f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n",
+                                           reply_markup=AdminViewMarkup.admin_in_product())
+            else:
+                await bot.send_message(message.from_user.id,
+                                       "Товар Ozon не найден!",
+                                       reply_markup=AdminCheckMarkup.admin_check_ozon())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "Надо ввести цифру!",
+                                   reply_markup=AdminCheckMarkup.admin_check_ozon())

@@ -24,3 +24,7 @@ class AdminStatesWb(StatesGroup):
     photo_wb_2: State = State()
     photo_wb_3: State = State()
     photo_finish: State = State()
+
+
+class AdminChangeOzon(StatesGroup):
+    enter_id: State = State()
