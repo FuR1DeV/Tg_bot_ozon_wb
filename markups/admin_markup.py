@@ -150,7 +150,18 @@ class AdminAddMarkup:
     @staticmethod
     def admin_add_wb():
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get1 = InlineKeyboardButton(text='Назад в меню',
+        get1 = InlineKeyboardButton(text='Отмена',
                                     callback_data='admin_wb_check')
         approve_.insert(get1)
+        return approve_
+
+    @staticmethod
+    def admin_add_wb_finish():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text='Отмена',
+                                    callback_data='admin_wb_check')
+        get2 = InlineKeyboardButton(text='Добавить',
+                                    callback_data='admin_wb_add_product')
+        approve_.insert(get1)
+        approve_.insert(get2)
         return approve_

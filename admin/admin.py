@@ -308,7 +308,7 @@ class AdminOzonAddProduct:
                f"<b>Артикул товара</b> - <i>{article_product}</i>\n" \
                f"<b>Цена</b> - <i>{price}</i>\n" \
                f"<b>Ссылка UTM</b> - <i>{link_utm}</i>\n\n" \
-               f"<b>Вы можете еще добавить 2 Фото</b>"
+               f"<b>У вас 1 Фотография, Вы можете еще добавить 2</b>"
         await message.answer_photo(message.photo[2].file_id,
                                    caption=text,
                                    reply_markup=AdminAddMarkup.admin_add_ozon_finish())
@@ -362,7 +362,7 @@ class AdminOzonAddProduct:
                    f"<b>Артикул товара</b> - <i>{article_product}</i>\n" \
                    f"<b>Цена</b> - <i>{price}</i>\n" \
                    f"<b>Ссылка UTM</b> - <i>{link_utm}</i>\n\n" \
-                   f"<b>У вас 3 фотографии, теперь жмите Добавить</b>"
+                   f"<b>У вас 3 Фотографии, теперь жмите Добавить</b>"
             media = types.MediaGroup()
             for i in data.get("photo"):
                 media.attach_photo(i)
@@ -394,78 +394,215 @@ class AdminOzonAddProduct:
         await state.finish()
 
 
-class AdminWb:
+class AdminWbAddProduct:
+
+    @staticmethod
+    async def admin_wb_add_product(callback: types.CallbackQuery):
+        await callback.message.edit_text("Добавляем товар из Wildberries\n"
+                                         "Введите <b>Наименование</b>",
+                                         reply_markup=AdminAddMarkup.admin_add_wb())
+        await states.AdminStatesWb.title.set()
+
     @staticmethod
     async def title_wb(message: types.Message, state: FSMContext):
-        async with state.proxy() as data:
-            data["title"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Название</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Категорию товара</b>")
-        await states.AdminStatesWb.next()
+        if message.text:
+            await state.update_data(title=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите Категорию товара</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb())
+            await states.AdminStatesWb.next()
 
     @staticmethod
     async def type_wb(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["type_product"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Категория</b> - {message.text}\n\n"
-                               f"<b>Теперь введите Артикул продавца</b>")
-        await states.AdminStatesWb.next()
+            title = data.get("title")
+        if message.text:
+            await state.update_data(type_product=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите Артикул Продавца</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb())
+            await states.AdminStatesWb.next()
 
     @staticmethod
     async def article_seller_wb(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["article_seller"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Артикул продавца</b> - {message.text}\n\n"
-                               f"<b>Теперь введите артикул товара</b>")
-        await states.AdminStatesWb.next()
+            title = data.get("title")
+            type_product = data.get("type_product")
+        if message.text:
+            await state.update_data(article_seller=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул Продавца</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите Артикул Товара</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb())
+            await states.AdminStatesWb.next()
 
     @staticmethod
     async def article_product_wb(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["article_product"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Артикул товара</b> - {message.text}\n\n"
-                               f"<b>Теперь введите цену с учетом СПП</b>")
-        await states.AdminStatesWb.next()
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+        if message.text:
+            await state.update_data(article_product=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n"
+                                   f"<b>Артикул Товара</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите цену</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesWb.next()
 
     @staticmethod
-    async def price_wb(message: types.Message, state: FSMContext):
+    async def price_spp_wb(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["price_spp"] = message.text
-        await bot.send_message(message.from_user.id,
-                               f"<b>Цена с учетом СПП</b> - {message.text}\n\n"
-                               f"<b>Теперь введите ссылку на товар</b>")
-        await states.AdminStatesWb.next()
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+            article_product = data.get("article_product")
+        if message.text:
+            await state.update_data(price_spp=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n"
+                                   f"<b>Артикул Товара</b> - <i>{article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь введите ссылку</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesWb.next()
 
     @staticmethod
     async def link_wb(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data["link"] = message.text
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+            article_product = data.get("article_product")
+            price_spp = data.get("price_spp")
             data["photo"] = []
-        await bot.send_message(message.from_user.id,
-                               f"<b>Ссылка</b> - {message.text}\n\n"
-                               f"<b>Теперь введите ссылку на фото</b>")
+        if message.text:
+            await state.update_data(link=message.text)
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Наименование</b> - <i>{title}</i>\n"
+                                   f"<b>Категория</b> - <i>{type_product}</i>\n"
+                                   f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n"
+                                   f"<b>Артикул Товара</b> - <i>{article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{price_spp}</i>\n"
+                                   f"<b>Ссылка</b> - <i>{message.text}</i>\n\n"
+                                   f"<b>Теперь добавьте Фото (Фото добавляется по одной)</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def photo_wb_1(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+            article_product = data.get("article_product")
+            price_spp = data.get("price_spp")
+            link = data.get("link")
+        if message.photo:
+            async with state.proxy() as data:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+        text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+               f"<b>Категория</b> - <i>{type_product}</i>\n" \
+               f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n" \
+               f"<b>Артикул Товара</b> - <i>{article_product}</i>\n" \
+               f"<b>Цена СПП</b> - <i>{price_spp}</i>\n" \
+               f"<b>Ссылка</b> - <i>{link}</i>\n\n" \
+               f"<b>У вас 1 Фотография, Вы можете еще добавить 2</b>"
+        await message.answer_photo(message.photo[2].file_id,
+                                   caption=text,
+                                   reply_markup=AdminAddMarkup.admin_add_wb_finish())
         await states.AdminStatesWb.next()
 
     @staticmethod
-    async def photo_wb(message: types.Message, state: FSMContext):
+    async def photo_wb_2(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
-            data.get("photo").append(message.text)
-        await bot.send_message(message.from_user.id,
-                               f"<b>Название</b> - {data.get('title')}\n"
-                               f"<b>Категория</b> - {data.get('type_product')}\n"
-                               f"<b>Артикул продавца</b> - {data.get('article_seller')}\n"
-                               f"<b>Артикул товара</b> - {data.get('article_product')}\n"
-                               f"<b>Цена</b> - {data.get('price')}\n"
-                               f"<b>Ссылка</b> - {data.get('link')}\n"
-                               f"<b>Фото</b> - {data.get('photo')}\n\n"
-                               f"<b>Вы можете еще раз сюда ввести ссылку на Фото чтобы Добавить несколько Фото "
-                               f"или нажмите Завершить</b>",
-                               reply_markup=AdminCheckMarkup.admin_done_wb(),
-                               disable_web_page_preview=True)
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+            article_product = data.get("article_product")
+            price_spp = data.get("price_spp")
+            link = data.get("link")
+            if message.photo:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+            text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+                   f"<b>Категория</b> - <i>{type_product}</i>\n" \
+                   f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n" \
+                   f"<b>Артикул Товара</b> - <i>{article_product}</i>\n" \
+                   f"<b>Цена СПП</b> - <i>{price_spp}</i>\n" \
+                   f"<b>Ссылка</b> - <i>{link}</i>\n\n" \
+                   f"<b>У вас 2 Фотографии, можете добавить еще 1</b>"
+            media = types.MediaGroup()
+            for i in data.get("photo"):
+                media.attach_photo(i)
+            await bot.send_media_group(message.from_user.id,
+                                       media=media)
+            await bot.send_message(message.from_user.id,
+                                   text,
+                                   reply_markup=AdminAddMarkup.admin_add_wb_finish(),
+                                   disable_web_page_preview=True)
+            await states.AdminStatesWb.next()
+
+    @staticmethod
+    async def photo_wb_3(message: types.Message, state: FSMContext):
+        async with state.proxy() as data:
+            title = data.get("title")
+            type_product = data.get("type_product")
+            article_seller = data.get("article_seller")
+            article_product = data.get("article_product")
+            price_spp = data.get("price_spp")
+            link = data.get("link")
+            if message.photo:
+                data.get("photo").append(message.photo[2].file_id)
+                await bot.delete_message(message.from_user.id, message.message_id)
+                await bot.delete_message(message.from_user.id, message.message_id - 1)
+                await bot.delete_message(message.from_user.id, message.message_id - 2)
+                await bot.delete_message(message.from_user.id, message.message_id - 3)
+            text = f"<b>Наименование</b> - <i>{title}</i>\n" \
+                   f"<b>Категория</b> - <i>{type_product}</i>\n" \
+                   f"<b>Артикул Продавца</b> - <i>{article_seller}</i>\n" \
+                   f"<b>Артикул Товара</b> - <i>{article_product}</i>\n" \
+                   f"<b>Цена СПП</b> - <i>{price_spp}</i>\n" \
+                   f"<b>Ссылка</b> - <i>{link}</i>\n\n" \
+                   f"<b>У вас 3 Фотографии, теперь жмите Добавить</b>"
+            media = types.MediaGroup()
+            for i in data.get("photo"):
+                media.attach_photo(i)
+            await bot.send_media_group(message.from_user.id,
+                                       media=media)
+            await bot.send_message(message.from_user.id,
+                                   text,
+                                   reply_markup=AdminAddMarkup.admin_add_wb_finish(),
+                                   disable_web_page_preview=True)
+        await states.AdminStatesWb.next()
 
     @staticmethod
     async def wb_finish(callback: types.CallbackQuery, state: FSMContext):
@@ -477,6 +614,11 @@ class AdminWb:
                                                         int(data.get('price_spp')),
                                                         data.get('link'),
                                                         data.get('photo'))
+        await bot.delete_message(callback.from_user.id, callback.message.message_id)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 1)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 2)
+        await bot.delete_message(callback.from_user.id, callback.message.message_id - 3)
         await bot.send_message(callback.from_user.id,
-                               "Товар Wildberries успешно добавился!")
+                               "Товар Wildberries успешно добавился!",
+                               reply_markup=AdminCheckMarkup.admin_check_wb())
         await state.finish()

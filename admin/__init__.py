@@ -2,7 +2,7 @@ __all__ = ["register_admin_handler"]
 
 from aiogram import Dispatcher
 
-from .admin import AdminCheckOzon, AdminCheckWb, AdminMain, AdminOzonAddProduct
+from .admin import AdminCheckOzon, AdminCheckWb, AdminMain, AdminOzonAddProduct, AdminWbAddProduct
 from states import AdminStatesOzon, AdminStatesWb
 
 
@@ -70,3 +70,33 @@ def register_admin_handler(disp: Dispatcher):
     disp.register_callback_query_handler(AdminOzonAddProduct.ozon_finish,
                                          state=["*"],
                                          text="admin_ozon_add_product")
+
+    """Admin Ozon Add Product"""
+
+    disp.register_callback_query_handler(AdminWbAddProduct.admin_wb_add_product,
+                                         state=["*"],
+                                         text="admin_wb_add")
+    disp.register_message_handler(AdminWbAddProduct.title_wb,
+                                  state=AdminStatesWb.title)
+    disp.register_message_handler(AdminWbAddProduct.type_wb,
+                                  state=AdminStatesWb.type_product)
+    disp.register_message_handler(AdminWbAddProduct.article_seller_wb,
+                                  state=AdminStatesWb.article_seller)
+    disp.register_message_handler(AdminWbAddProduct.article_product_wb,
+                                  state=AdminStatesWb.article_product)
+    disp.register_message_handler(AdminWbAddProduct.price_spp_wb,
+                                  state=AdminStatesWb.price_spp)
+    disp.register_message_handler(AdminWbAddProduct.link_wb,
+                                  state=AdminStatesWb.link)
+    disp.register_message_handler(AdminWbAddProduct.photo_wb_1,
+                                  state=AdminStatesWb.photo_wb_1,
+                                  content_types=["photo"])
+    disp.register_message_handler(AdminWbAddProduct.photo_wb_2,
+                                  state=AdminStatesWb.photo_wb_2,
+                                  content_types=["photo"])
+    disp.register_message_handler(AdminWbAddProduct.photo_wb_3,
+                                  state=AdminStatesWb.photo_wb_3,
+                                  content_types=["photo"])
+    disp.register_callback_query_handler(AdminWbAddProduct.wb_finish,
+                                         state=["*"],
+                                         text="admin_wb_add_product")

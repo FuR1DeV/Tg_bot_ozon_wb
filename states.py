@@ -20,4 +20,7 @@ class AdminStatesWb(StatesGroup):
     article_product: State = State()
     price_spp: State = State()
     link: State = State()
-    photo: State = State()
+    photo_wb_1: State = State()
+    photo_wb_2: State = State()
+    photo_wb_3: State = State()
+    photo_finish: State = State()
