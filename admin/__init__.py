@@ -109,11 +109,36 @@ def register_admin_handler(disp: Dispatcher):
                                          state=["*"],
                                          text="admin_ozon_view")
     disp.register_message_handler(AdminOzonView.admin_ozon_enter_id,
-                                  state=states.AdminChangeOzon,
+                                  state=states.AdminChangeOzon.enter_id,
                                   content_types=["photo", "text"])
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_back,
                                          state=["*"],
                                          text="admin_ozon_change_back")
-    # disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_menu,
-    #                                      state=["*"],
-    #                                      text="admin_ozon_change_menu")
+    disp.register_callback_query_handler(AdminOzonView.admin_in_product_ozon_back,
+                                         state=["*"],
+                                         text="admin_in_product_ozon_back")
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_title,
+                                         state=["*"],
+                                         text="admin_ozon_change_title")
+    disp.register_message_handler(AdminOzonView.admin_ozon_change_title_,
+                                  state=states.AdminChangeOzon.title)
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_type_product,
+                                         state=["*"],
+                                         text="admin_ozon_change_type_product")
+    disp.register_message_handler(AdminOzonView.admin_ozon_change_type_product_,
+                                  state=states.AdminChangeOzon.type_product)
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_article_product,
+                                         state=["*"],
+                                         text="admin_ozon_change_article_product")
+    disp.register_message_handler(AdminOzonView.admin_ozon_change_article_product_,
+                                  state=states.AdminChangeOzon.article_product)
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_price,
+                                         state=["*"],
+                                         text="admin_ozon_change_price")
+    disp.register_message_handler(AdminOzonView.admin_ozon_change_price_,
+                                  state=states.AdminChangeOzon.price)
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_link_utm,
+                                         state=["*"],
+                                         text="admin_ozon_change_link_utm")
+    disp.register_message_handler(AdminOzonView.admin_ozon_change_link_utm_,
+                                  state=states.AdminChangeOzon.link_utm)

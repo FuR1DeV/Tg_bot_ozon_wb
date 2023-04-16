@@ -141,7 +141,7 @@ class AdminAddMarkup:
         approve_ = InlineKeyboardMarkup(row_width=1)
         get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Отмена',
                                     callback_data='admin_ozon_check')
-        get2 = InlineKeyboardButton(text='Добавить',
+        get2 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_ozon_add_product')
         approve_.insert(get1)
         approve_.insert(get2)
@@ -178,18 +178,18 @@ class AdminViewMarkup:
         return approve_
 
     @staticmethod
-    def admin_in_product():
+    def admin_in_product_ozon():
         approve_ = InlineKeyboardMarkup(row_width=2)
         get0 = InlineKeyboardButton(text='Наименование',
-                                    callback_data='admin_ozon_change_menu')
+                                    callback_data='admin_ozon_change_title')
         get1 = InlineKeyboardButton(text='Категорию',
-                                    callback_data='admin_ozon_change_menu')
+                                    callback_data='admin_ozon_change_type_product')
         get2 = InlineKeyboardButton(text='Артикул',
-                                    callback_data='admin_ozon_change_menu')
+                                    callback_data='admin_ozon_change_article_product')
         get3 = InlineKeyboardButton(text='Цену',
-                                    callback_data='admin_ozon_change_menu')
+                                    callback_data='admin_ozon_change_price')
         get4 = InlineKeyboardButton(text='Ссылку UTM',
-                                    callback_data='admin_ozon_change_menu')
+                                    callback_data='admin_ozon_change_link_utm')
         get5 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
                                     callback_data='admin_ozon_change_back')
         approve_.insert(get0)
@@ -198,4 +198,12 @@ class AdminViewMarkup:
         approve_.insert(get3)
         approve_.insert(get4)
         approve_.insert(get5)
+        return approve_
+
+    @staticmethod
+    def admin_in_product_ozon_back():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
+                                    callback_data='admin_in_product_ozon_back')
+        approve_.insert(get1)
         return approve_

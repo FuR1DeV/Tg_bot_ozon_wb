@@ -71,3 +71,33 @@ async def product_ozon_add_photo(product_id, photo_id):
             result.append(photo_id)
             await product_ozon.update(photo=result).apply()
             return False
+
+
+async def product_ozon_change_title(product_id, new_title):
+    """Обновляется наименование товара Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(title=new_title).apply()
+
+
+async def product_ozon_change_type_product(product_id, new_type_product):
+    """Обновляется Категория товара Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(type_product=new_type_product).apply()
+
+
+async def product_ozon_change_article_product(product_id, new_article_product):
+    """Обновляется Артикул товара Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(article_product=int(new_article_product)).apply()
+
+
+async def product_ozon_change_price(product_id, new_price):
+    """Обновляется Цена товара Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(price=int(new_price)).apply()
+
+
+async def product_ozon_change_link_utm(product_id, new_link_utm):
+    """Обновляется Ссылка UTM товара Ozon"""
+    product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
+    await product_ozon.update(link_utm=new_link_utm).apply()
