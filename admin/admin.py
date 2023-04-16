@@ -23,8 +23,10 @@ class AdminMain:
 class AdminCheckOzon:
     @staticmethod
     async def admin_check_ozon(callback: types.CallbackQuery, state: FSMContext):
+        len_products = await general_get.products_ozon_all()
         try:
-            await callback.message.edit_text(text="<b>Вы в меню Ozon</b>",
+            await callback.message.edit_text(text="<b>Вы в меню Ozon</b>\n"
+                                                  f"<b>Кол-во товаров - {len(len_products)}</b>",
                                              reply_markup=AdminCheckMarkup.admin_check_ozon())
             await state.finish()
         except:
@@ -34,7 +36,8 @@ class AdminCheckOzon:
             except:
                 pass
             await bot.send_message(callback.from_user.id,
-                                   "<b>Вы в меню Ozon</b>",
+                                   "<b>Вы в меню Ozon</b>\n"
+                                   f"<b>Кол-во товаров - {len(len_products)}</b>",
                                    reply_markup=AdminCheckMarkup.admin_check_ozon())
 
     @staticmethod
@@ -59,13 +62,17 @@ class AdminCheckOzon:
         while True:
             for i in items:
                 if int(i.id) == page:
+                    try:
+                        len_photo = len(i.photo)
+                    except:
+                        len_photo = "Фото нет!"
                     book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
                                 f"<b>Название</b> - <i>{i.title}</i>\n"
                                 f"<b>Категория</b> - <i>{i.type_product}</i>\n"
                                 f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                 f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
                                 f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
-                                f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
+                                f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n"
                                 f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
                 if len(book) == 5:
@@ -90,13 +97,17 @@ class AdminCheckOzon:
             while True:
                 for i in items:
                     if int(i.id) == page:
+                        try:
+                            len_photo = len(i.photo)
+                        except:
+                            len_photo = "Фото нет!"
                         book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
                                     f"<b>Название</b> - <i>{i.title}</i>\n"
                                     f"<b>Категория</b> - <i>{i.type_product}</i>\n"
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                     f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
                                     f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
-                                    f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n"
                                     f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
                     if len(book) == 5:
@@ -119,8 +130,10 @@ class AdminCheckOzon:
 class AdminCheckWb:
     @staticmethod
     async def admin_check_wb(callback: types.CallbackQuery, state: FSMContext):
+        len_products = await general_get.products_wb_all()
         try:
-            await callback.message.edit_text(text="<b>Вы в меню Wildberries</b>",
+            await callback.message.edit_text(text="<b>Вы в меню Wildberries</b>\n"
+                                                  f"<b>Кол-во товаров - {len(len_products)}</b>",
                                              reply_markup=AdminCheckMarkup.admin_check_wb())
             await state.finish()
         except:
@@ -130,7 +143,8 @@ class AdminCheckWb:
             except:
                 pass
             await bot.send_message(callback.from_user.id,
-                                   "<b>Вы в меню Wildberries</b>",
+                                   "<b>Вы в меню Wildberries</b>\n"
+                                   f"<b>Кол-во товаров - {len(len_products)}</b>",
                                    reply_markup=AdminCheckMarkup.admin_check_wb())
 
     @staticmethod
@@ -155,6 +169,10 @@ class AdminCheckWb:
         while True:
             for i in items:
                 if int(i.id) == page:
+                    try:
+                        len_photo = len(i.photo)
+                    except:
+                        len_photo = "Фото нет!"
                     book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
                                 f"<b>Название</b> - <i>{i.title}</i>\n"
                                 f"<b>Категория</b> - <i>{i.type_product}</i>\n"
@@ -162,7 +180,7 @@ class AdminCheckWb:
                                 f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                 f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                 f"<b>Ссылка</b> - <i>{i.link}</i>\n"
-                                f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
+                                f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n"
                                 f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
                 if len(book) == 5:
@@ -187,6 +205,10 @@ class AdminCheckWb:
             while True:
                 for i in items:
                     if int(i.id) == page:
+                        try:
+                            len_photo = len(i.photo)
+                        except:
+                            len_photo = "Фото нет!"
                         book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
                                     f"<b>Название</b> - <i>{i.title}</i>\n"
                                     f"<b>Категория</b> - <i>{i.type_product}</i>\n"
@@ -194,7 +216,7 @@ class AdminCheckWb:
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                     f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                     f"<b>Ссылка</b> - <i>{i.link}</i>\n"
-                                    f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n"
                                     f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
                     if len(book) == 5:
@@ -255,7 +277,7 @@ class AdminOzonAddProduct:
         async with state.proxy() as data:
             title = data.get("title")
             type_product = data.get("type_product")
-        if message.text:
+        if message.text.isdigit():
             await state.update_data(article_product=message.text)
             await bot.delete_message(message.from_user.id, message.message_id)
             await bot.delete_message(message.from_user.id, message.message_id - 1)
@@ -266,6 +288,12 @@ class AdminOzonAddProduct:
                                    f"<b>Теперь введите цену</b>",
                                    reply_markup=AdminAddMarkup.admin_add_ozon())
             await states.AdminStatesOzon.next()
+        else:
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Артикул должен быть цифрой</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon())
 
     @staticmethod
     async def price_ozon(message: types.Message, state: FSMContext):
@@ -273,7 +301,7 @@ class AdminOzonAddProduct:
             title = data.get("title")
             type_product = data.get("type_product")
             article_product = data.get("article_product")
-        if message.text:
+        if message.text.isdigit():
             await state.update_data(price=message.text)
             await bot.delete_message(message.from_user.id, message.message_id)
             await bot.delete_message(message.from_user.id, message.message_id - 1)
@@ -286,6 +314,12 @@ class AdminOzonAddProduct:
                                    reply_markup=AdminAddMarkup.admin_add_ozon(),
                                    disable_web_page_preview=True)
             await states.AdminStatesOzon.next()
+        else:
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Цена должна быть цифрой!</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_ozon())
 
     @staticmethod
     async def link_utm_ozon(message: types.Message, state: FSMContext):
@@ -305,7 +339,7 @@ class AdminOzonAddProduct:
                                    f"<b>Артикул товара</b> - <i>{article_product}</i>\n"
                                    f"<b>Цена</b> - <i>{price}</i>\n"
                                    f"<b>Ссылка UTM</b> - <i>{message.text}</i>\n\n"
-                                   f"<b>Теперь загрузите Фото</b>",
+                                   f"<b>Теперь добавьте Фото (Фото добавляется по одной)</b>",
                                    reply_markup=AdminAddMarkup.admin_add_ozon(),
                                    disable_web_page_preview=True)
             await states.AdminStatesOzon.next()
@@ -410,8 +444,10 @@ class AdminOzonAddProduct:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id - i)
         except:
             pass
+        len_product = await general_get.products_ozon_all()
         await bot.send_message(callback.from_user.id,
-                               "Товар Ozon успешно добавился!",
+                               "<b>Товар Ozon успешно добавился!</b>\n"
+                               f"<b>Всего товаров - {len(len_product)}</b>",
                                reply_markup=AdminCheckMarkup.admin_check_ozon())
         await state.finish()
 
@@ -475,7 +511,7 @@ class AdminWbAddProduct:
             title = data.get("title")
             type_product = data.get("type_product")
             article_seller = data.get("article_seller")
-        if message.text:
+        if message.text.isdigit():
             await state.update_data(article_product=message.text)
             await bot.delete_message(message.from_user.id, message.message_id)
             await bot.delete_message(message.from_user.id, message.message_id - 1)
@@ -488,6 +524,12 @@ class AdminWbAddProduct:
                                    reply_markup=AdminAddMarkup.admin_add_wb(),
                                    disable_web_page_preview=True)
             await states.AdminStatesWb.next()
+        else:
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Артикул товара должен быть цифрой!</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb())
 
     @staticmethod
     async def price_spp_wb(message: types.Message, state: FSMContext):
@@ -496,7 +538,7 @@ class AdminWbAddProduct:
             type_product = data.get("type_product")
             article_seller = data.get("article_seller")
             article_product = data.get("article_product")
-        if message.text:
+        if message.text.isdigit():
             await state.update_data(price_spp=message.text)
             await bot.delete_message(message.from_user.id, message.message_id)
             await bot.delete_message(message.from_user.id, message.message_id - 1)
@@ -510,6 +552,12 @@ class AdminWbAddProduct:
                                    reply_markup=AdminAddMarkup.admin_add_wb(),
                                    disable_web_page_preview=True)
             await states.AdminStatesWb.next()
+        else:
+            await bot.delete_message(message.from_user.id, message.message_id)
+            await bot.delete_message(message.from_user.id, message.message_id - 1)
+            await bot.send_message(message.from_user.id,
+                                   f"<b>Цена должна быть цифрой!</b>",
+                                   reply_markup=AdminAddMarkup.admin_add_wb())
 
     @staticmethod
     async def link_wb(message: types.Message, state: FSMContext):
@@ -641,8 +689,10 @@ class AdminWbAddProduct:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id - i)
         except:
             pass
+        len_product = await general_get.products_wb_all()
         await bot.send_message(callback.from_user.id,
-                               "Товар Wildberries успешно добавился!",
+                               "<b>Товар Wildberries успешно добавился!</b>\n"
+                               f"<b>Всего товаров - {len(len_product)}</b>",
                                reply_markup=AdminCheckMarkup.admin_check_wb())
         await state.finish()
 

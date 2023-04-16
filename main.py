@@ -99,10 +99,13 @@ async def admin(message: types.Message, state: FSMContext):
                                         message.from_user.username,
                                         message.from_user.first_name,
                                         message.from_user.last_name)
+        len_product_wb = await general_get.products_wb_all()
+        len_product_ozon = await general_get.products_ozon_all()
         await bot.send_message(message.from_user.id,
                                "<b>Добро пожаловать в меню Администратора</b>\n"
                                "<b>Вы можете просмотреть товары, загружать в Excel, "
-                               "редактировать и добавлять новые</b>",
+                               "редактировать и добавлять новые</b>\n\n"
+                               f"<b>Всего у вас товаров - {len(len_product_wb) + len(len_product_ozon)}</b>",
                                reply_markup=AdminCheckMarkup.admin_check())
     else:
         await bot.send_message(message.from_user.id, "У вас нет прав доступа!")
