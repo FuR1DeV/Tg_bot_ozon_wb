@@ -1,54 +1,11 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
-from content import get_products_ozon_all_text
 
 from settings.config import KEYBOARD
 
 pagination_call = CallbackData("paginator", "key", "page")
 show_item = CallbackData("show_item", "item_id")
 
-
-# def get_page_keyboard(max_pages: int, key="book", page: int = 1):
-#     previous_page = page - 1
-#     previous_page_text = f"{KEYBOARD.get('FAST_REVERSE_BUTTON')}"
-#
-#     current_page = page
-#     current_page_text = f"{page}"
-#
-#     next_page = page + 1
-#     next_page_text = f"{KEYBOARD.get('FAST_FORWARD_BUTTON')}"
-#
-#     markup = InlineKeyboardMarkup()
-#
-#     if previous_page > 0:
-#         markup.insert(
-#             InlineKeyboardButton(
-#                 text=previous_page_text,
-#                 callback_data=pagination_call.new(key=key,
-#                                                   page=previous_page)
-#             )
-#         )
-#     markup.insert(
-#         InlineKeyboardButton(
-#             text=current_page_text,
-#             callback_data=pagination_call.new(key=key, page="current_page")
-#         )
-#     )
-#
-#     if next_page < max_pages:
-#         markup.insert(
-#             InlineKeyboardButton(
-#                 text=next_page_text,
-#                 callback_data=pagination_call.new(key=key, page=next_page)
-#             )
-#         )
-#     return markup
-#
-#
-# def see_all_products_markup():
-#     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-#     keyboard.row(f"{KEYBOARD.get('INFORMATION')} Посмотреть все товары {KEYBOARD.get('INFORMATION')}")
-#     return keyboard
 
 class AdminCheckMarkup:
 
@@ -91,7 +48,7 @@ class AdminCheckMarkup:
         get1 = InlineKeyboardButton(text='Посмотреть все товары WB',
                                     callback_data='admin_wb_tg')
         get2 = InlineKeyboardButton(text='Просмотр Товара',
-                                    callback_data='admin_wb_change')
+                                    callback_data='admin_wb_view')
         get3 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_wb_add')
         get4 = InlineKeyboardButton(text='Главное Меню',
@@ -160,14 +117,14 @@ class AdminAddMarkup:
         approve_ = InlineKeyboardMarkup(row_width=1)
         get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Отмена',
                                     callback_data='admin_wb_check')
-        get2 = InlineKeyboardButton(text='Добавить',
+        get2 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_wb_add_product')
         approve_.insert(get1)
         approve_.insert(get2)
         return approve_
 
 
-class AdminViewMarkup:
+class AdminViewOzonMarkup:
 
     @staticmethod
     def admin_enter_id_ozon():
@@ -205,5 +162,50 @@ class AdminViewMarkup:
         approve_ = InlineKeyboardMarkup(row_width=1)
         get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
                                     callback_data='admin_in_product_ozon_back')
+        approve_.insert(get1)
+        return approve_
+
+
+class AdminViewWbMarkup:
+
+    @staticmethod
+    def admin_enter_id_wb():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
+                                    callback_data='admin_wb_check')
+        approve_.insert(get1)
+        return approve_
+
+    @staticmethod
+    def admin_in_product_wb():
+        approve_ = InlineKeyboardMarkup(row_width=2)
+        get0 = InlineKeyboardButton(text='Наименование',
+                                    callback_data='admin_wb_change_title')
+        get1 = InlineKeyboardButton(text='Категорию',
+                                    callback_data='admin_wb_change_type_product')
+        get2 = InlineKeyboardButton(text='Артикул Продавца',
+                                    callback_data='admin_wb_change_article_seller')
+        get3 = InlineKeyboardButton(text='Артикул Товара',
+                                    callback_data='admin_wb_change_article_product')
+        get4 = InlineKeyboardButton(text='Цену СПП',
+                                    callback_data='admin_wb_change_price_spp')
+        get5 = InlineKeyboardButton(text='Ссылку',
+                                    callback_data='admin_wb_change_link')
+        get6 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
+                                    callback_data='admin_wb_change_back')
+        approve_.insert(get0)
+        approve_.insert(get1)
+        approve_.insert(get2)
+        approve_.insert(get3)
+        approve_.insert(get4)
+        approve_.insert(get5)
+        approve_.insert(get6)
+        return approve_
+
+    @staticmethod
+    def admin_in_product_wb_back():
+        approve_ = InlineKeyboardMarkup(row_width=1)
+        get1 = InlineKeyboardButton(text=f'{KEYBOARD.get("RIGHT_ARROW_CURVING_LEFT")} Назад',
+                                    callback_data='admin_in_product_wb_back')
         approve_.insert(get1)
         return approve_

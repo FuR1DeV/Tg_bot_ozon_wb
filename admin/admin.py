@@ -6,7 +6,7 @@ from aiogram.types import InputFile
 
 import states
 from bot import bot
-from markups.admin_markup import AdminCheckMarkup, AdminAddMarkup, AdminViewMarkup
+from markups.admin_markup import AdminCheckMarkup, AdminAddMarkup, AdminViewOzonMarkup, AdminViewWbMarkup
 from data.commands import general_set, general_get
 
 
@@ -406,7 +406,7 @@ class AdminOzonAddProduct:
                                                           data.get('link_utm'),
                                                           data.get('photo'))
         try:
-            for i in range(0 ,6):
+            for i in range(0, 6):
                 await bot.delete_message(callback.from_user.id, callback.message.message_id - i)
         except:
             pass
@@ -652,7 +652,7 @@ class AdminOzonView:
     @staticmethod
     async def admin_ozon_view(callback: types.CallbackQuery):
         await callback.message.edit_text("Введите ID товара Ozon",
-                                         reply_markup=AdminViewMarkup.admin_enter_id_ozon())
+                                         reply_markup=AdminViewOzonMarkup.admin_enter_id_ozon())
         await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
@@ -691,7 +691,7 @@ class AdminOzonView:
                                            f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
                                            f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
                                            f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
-                                           reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                           reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
                 else:
                     product = await general_get.product_ozon_select(product.id)
                     media = types.MediaGroup()
@@ -719,7 +719,7 @@ class AdminOzonView:
                                            f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
                                            f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
                                            f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
-                                           reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                           reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         elif message.text.isdigit():
             product_id = int(message.text)
             product = await general_get.product_ozon_select(product_id)
@@ -752,7 +752,7 @@ class AdminOzonView:
                                            f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
                                            f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
                                            f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
-                                           reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                           reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
                 else:
                     await bot.send_message(message.from_user.id,
                                            f"<b>Товар без Фото!</b>\n"
@@ -765,7 +765,7 @@ class AdminOzonView:
                                            f"<b>Клики</b> - <i>{product.click}</i>\n\n"
                                            f"<b>У вас нет Фотографий!</b>\n"
                                            f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                           reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                           reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
             else:
                 await bot.send_message(message.from_user.id,
                                        "Товар Ozon не найден!",
@@ -800,7 +800,7 @@ class AdminOzonView:
                                                  f"<b>Цена</b> - <i>{product.price} руб.</i>\n"
                                                  f"<b>Ссылка с UTM</b> - <i>{product.link_utm}</i>\n"
                                                  f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
-                                                 reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                                 reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
             else:
                 await callback.message.edit_text("<b>Товар без Фото!</b>\n"
                                                  f"<b>ID</b> - <i>{product.id}</i>\n"
@@ -812,14 +812,14 @@ class AdminOzonView:
                                                  f"<b>Клики</b> - <i>{product.click}</i>\n\n"
                                                  f"<b>У вас нет Фотографий!</b>\n"
                                                  f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                                 reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                                 reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
     async def admin_ozon_change_title(callback: types.CallbackQuery):
         await states.AdminChangeOzon.title.set()
         await callback.message.edit_text("<b>Введите новое Наименование товара</b>",
-                                         reply_markup=AdminViewMarkup.admin_in_product_ozon_back())
+                                         reply_markup=AdminViewOzonMarkup.admin_in_product_ozon_back())
 
     @staticmethod
     async def admin_ozon_change_title_(message: types.Message, state: FSMContext):
@@ -852,7 +852,7 @@ class AdminOzonView:
                                    f"<b>Цена</b> - <i>{product_new.price} руб.</i>\n"
                                    f"<b>Ссылка с UTM</b> - <i>{product_new.link_utm}</i>\n"
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         else:
             await bot.send_message(message.from_user.id,
                                    "<b>Товар без Фото!</b>\n"
@@ -865,13 +865,14 @@ class AdminOzonView:
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
                                    f"<b>У вас нет Фотографий!</b>\n"
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
+        await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
     async def admin_ozon_change_type_product(callback: types.CallbackQuery):
         await states.AdminChangeOzon.type_product.set()
         await callback.message.edit_text("<b>Введите новую Категорию товара</b>",
-                                         reply_markup=AdminViewMarkup.admin_in_product_ozon_back())
+                                         reply_markup=AdminViewOzonMarkup.admin_in_product_ozon_back())
 
     @staticmethod
     async def admin_ozon_change_type_product_(message: types.Message, state: FSMContext):
@@ -904,7 +905,7 @@ class AdminOzonView:
                                    f"<b>Цена</b> - <i>{product_new.price} руб.</i>\n"
                                    f"<b>Ссылка с UTM</b> - <i>{product_new.link_utm}</i>\n"
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         else:
             await bot.send_message(message.from_user.id,
                                    "<b>Товар без Фото!</b>\n"
@@ -917,13 +918,14 @@ class AdminOzonView:
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
                                    f"<b>У вас нет Фотографий!</b>\n"
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
+        await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
     async def admin_ozon_change_article_product(callback: types.CallbackQuery):
         await states.AdminChangeOzon.article_product.set()
         await callback.message.edit_text("<b>Введите новый Артикул товара</b>",
-                                         reply_markup=AdminViewMarkup.admin_in_product_ozon_back())
+                                         reply_markup=AdminViewOzonMarkup.admin_in_product_ozon_back())
 
     @staticmethod
     async def admin_ozon_change_article_product_(message: types.Message, state: FSMContext):
@@ -956,7 +958,7 @@ class AdminOzonView:
                                    f"<b>Цена</b> - <i>{product_new.price} руб.</i>\n"
                                    f"<b>Ссылка с UTM</b> - <i>{product_new.link_utm}</i>\n"
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         else:
             await bot.send_message(message.from_user.id,
                                    "<b>Товар без Фото!</b>\n"
@@ -969,13 +971,14 @@ class AdminOzonView:
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
                                    f"<b>У вас нет Фотографий!</b>\n"
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
+        await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
     async def admin_ozon_change_price(callback: types.CallbackQuery):
         await states.AdminChangeOzon.price.set()
         await callback.message.edit_text("<b>Введите новую Цену товара</b>",
-                                         reply_markup=AdminViewMarkup.admin_in_product_ozon_back())
+                                         reply_markup=AdminViewOzonMarkup.admin_in_product_ozon_back())
 
     @staticmethod
     async def admin_ozon_change_price_(message: types.Message, state: FSMContext):
@@ -1008,7 +1011,7 @@ class AdminOzonView:
                                    f"<b>Цена</b> - <i>{product_new.price} руб.</i>\n"
                                    f"<b>Ссылка с UTM</b> - <i>{product_new.link_utm}</i>\n"
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         else:
             await bot.send_message(message.from_user.id,
                                    "<b>Товар без Фото!</b>\n"
@@ -1021,13 +1024,14 @@ class AdminOzonView:
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
                                    f"<b>У вас нет Фотографий!</b>\n"
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
+        await states.AdminChangeOzon.enter_id.set()
 
     @staticmethod
     async def admin_ozon_change_link_utm(callback: types.CallbackQuery):
         await states.AdminChangeOzon.link_utm.set()
         await callback.message.edit_text("<b>Введите новую Ссылку UTM</b>",
-                                         reply_markup=AdminViewMarkup.admin_in_product_ozon_back())
+                                         reply_markup=AdminViewOzonMarkup.admin_in_product_ozon_back())
 
     @staticmethod
     async def admin_ozon_change_link_utm_(message: types.Message, state: FSMContext):
@@ -1060,7 +1064,7 @@ class AdminOzonView:
                                    f"<b>Цена</b> - <i>{product_new.price} руб.</i>\n"
                                    f"<b>Ссылка с UTM</b> - <i>{product_new.link_utm}</i>\n"
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         else:
             await bot.send_message(message.from_user.id,
                                    "<b>Товар без Фото!</b>\n"
@@ -1073,4 +1077,510 @@ class AdminOzonView:
                                    f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
                                    f"<b>У вас нет Фотографий!</b>\n"
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
-                                   reply_markup=AdminViewMarkup.admin_in_product_ozon())
+                                   reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
+        await states.AdminChangeOzon.enter_id.set()
+
+
+class AdminWbView:
+
+    @staticmethod
+    async def admin_wb_view(callback: types.CallbackQuery):
+        await callback.message.edit_text("Введите ID товара Wildberries",
+                                         reply_markup=AdminViewWbMarkup.admin_enter_id_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_back(callback: types.CallbackQuery):
+        await callback.message.edit_text("<b>Вы в меню Wildberries</b>",
+                                         reply_markup=AdminCheckMarkup.admin_check_wb())
+
+    @staticmethod
+    async def admin_wb_enter_id(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        if message.photo:
+            async with state.proxy() as data:
+                product = data.get("product")
+                for i in range(0, 5):
+                    try:
+                        await bot.delete_message(message.from_user.id, message.message_id - i)
+                    except:
+                        pass
+                max_ = await general_set.product_wb_add_photo(product.id, message.photo[2].file_id)
+                if max_:
+                    product = await general_get.product_wb_select(product.id)
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    text = "<b>У вас 3 Фотографии</b>\n" \
+                           "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                           "<b>Редактировать Товар:</b>"
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                           f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+                else:
+                    product = await general_get.product_wb_select(product.id)
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    if len(product.photo) >= 3:
+                        text = "<b>У вас 3 Фотографии</b>\n" \
+                               "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    if len(product.photo) == 2:
+                        text = "<b>У вас 2 Фотографии</b>\n" \
+                               "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    elif len(product.photo) == 1:
+                        text = "<b>У вас 1 Фотография</b>\n" \
+                               "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                           f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        elif message.text.isdigit():
+            product_id = int(message.text)
+            product = await general_get.product_wb_select(product_id)
+            await state.update_data(product=product)
+            if product:
+                if product.photo:
+                    text = ""
+                    if len(product.photo) >= 3:
+                        text = "<b>У вас 3 Фотографии</b>\n" \
+                               "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    elif len(product.photo) == 2:
+                        text = "<b>У вас 2 Фотографии</b>\n" \
+                               "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    elif len(product.photo) == 1:
+                        text = "<b>У вас 1 Фотография</b>\n" \
+                               "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                               "<b>Редактировать Товар:</b>"
+                    media = types.MediaGroup()
+                    for i in product.photo:
+                        media.attach_photo(i)
+                    await bot.send_media_group(message.from_user.id,
+                                               media=media)
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                           f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                           reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+                else:
+                    await bot.send_message(message.from_user.id,
+                                           f"<b>Товар без Фото!</b>\n"
+                                           f"<b>ID</b> - <i>{product.id}</i>\n"
+                                           f"<b>Название</b> - <i>{product.title}</i>\n"
+                                           f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                           f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                           f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                           f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                           f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                           f"<b>Клики</b> - <i>{product.click}</i>\n\n"
+                                           f"<b>У вас нет Фотографий!</b>\n"
+                                           f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                           reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+            else:
+                await bot.send_message(message.from_user.id,
+                                       "Товар Wildberries не найден!",
+                                       reply_markup=AdminCheckMarkup.admin_check_wb())
+        elif not message.text.isdigit():
+            await bot.send_message(message.from_user.id,
+                                   "Надо ввести цифру!",
+                                   reply_markup=AdminCheckMarkup.admin_check_wb())
+
+    @staticmethod
+    async def admin_in_product_wb_back(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            product = data.get("product")
+            if product.photo:
+                text = ""
+                if len(product.photo) >= 3:
+                    text = "<b>У вас 3 Фотографии</b>\n" \
+                           "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                           "<b>Редактировать Товар:</b>"
+                elif len(product.photo) == 2:
+                    text = "<b>У вас 2 Фотографии</b>\n" \
+                           "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                           "<b>Редактировать Товар:</b>"
+                elif len(product.photo) == 1:
+                    text = "<b>У вас 1 Фотография</b>\n" \
+                           "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                           "<b>Редактировать Товар:</b>"
+                await callback.message.edit_text(f"<b>ID</b> - <i>{product.id}</i>\n"
+                                                 f"<b>Название</b> - <i>{product.title}</i>\n"
+                                                 f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                                 f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                                 f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                                 f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                                 f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                                 f"<b>Клики</b> - <i>{product.click}</i>\n\n" + text,
+                                                 reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+            else:
+                await callback.message.edit_text("<b>Товар без Фото!</b>\n"
+                                                 f"<b>ID</b> - <i>{product.id}</i>\n"
+                                                 f"<b>Название</b> - <i>{product.title}</i>\n"
+                                                 f"<b>Категория</b> - <i>{product.type_product}</i>\n"
+                                                 f"<b>Артикул продавца</b> - <i>{product.article_seller}</i>\n"
+                                                 f"<b>Артикул товара</b> - <i>{product.article_product}</i>\n"
+                                                 f"<b>Цена СПП</b> - <i>{product.price_spp} руб.</i>\n"
+                                                 f"<b>Ссылка</b> - <i>{product.link}</i>\n"
+                                                 f"<b>Клики</b> - <i>{product.click}</i>\n\n"
+                                                 f"<b>У вас нет Фотографий!</b>\n"
+                                                 f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                                 reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_title(callback: types.CallbackQuery):
+        await states.AdminChangeWb.title.set()
+        await callback.message.edit_text("<b>Введите новое Наименование товара</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_title_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_title(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_type_product(callback: types.CallbackQuery):
+        await states.AdminChangeWb.type_product.set()
+        await callback.message.edit_text("<b>Введите новую Категорию товара</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_type_product_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_type_product(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_article_seller(callback: types.CallbackQuery):
+        await states.AdminChangeWb.article_seller.set()
+        await callback.message.edit_text("<b>Введите новый Артикул продавца</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_article_seller_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_article_seller(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_article_product(callback: types.CallbackQuery):
+        await states.AdminChangeWb.article_product.set()
+        await callback.message.edit_text("<b>Введите новый Артикул товара</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_article_product_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_article_product(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_price_spp(callback: types.CallbackQuery):
+        await states.AdminChangeWb.price_spp.set()
+        await callback.message.edit_text("<b>Введите новую Цену СПП товара</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_price_spp_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_price(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_change_link(callback: types.CallbackQuery):
+        await states.AdminChangeWb.link.set()
+        await callback.message.edit_text("<b>Введите новую Ссылку</b>",
+                                         reply_markup=AdminViewWbMarkup.admin_in_product_wb_back())
+
+    @staticmethod
+    async def admin_wb_change_link_(message: types.Message, state: FSMContext):
+        await bot.delete_message(message.from_user.id, message.message_id)
+        await bot.delete_message(message.from_user.id, message.message_id - 1)
+        async with state.proxy() as data:
+            product = data.get("product")
+            await general_set.product_wb_change_link(product.id, message.text)
+        product_new = await general_get.product_wb_select(product.id)
+        await state.update_data(product=product_new)
+        if product_new.photo:
+            text = ""
+            if len(product_new.photo) >= 3:
+                text = "<b>У вас 3 Фотографии</b>\n" \
+                       "<b>Вы не можете добавить сюда Фотографии</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 2:
+                text = "<b>У вас 2 Фотографии</b>\n" \
+                       "<b>Вы можете добавить сюда 1 Фотографию (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            elif len(product_new.photo) == 1:
+                text = "<b>У вас 1 Фотография</b>\n" \
+                       "<b>Вы можете добавить сюда 2 Фотографии (Добавлять по 1 Фото)</b>\n" \
+                       "<b>Редактировать Товар:</b>"
+            await bot.send_message(message.from_user.id,
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n" + text,
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        else:
+            await bot.send_message(message.from_user.id,
+                                   "<b>Товар без Фото!</b>\n"
+                                   f"<b>ID</b> - <i>{product_new.id}</i>\n"
+                                   f"<b>Название</b> - <i>{product_new.title}</i>\n"
+                                   f"<b>Категория</b> - <i>{product_new.type_product}</i>\n"
+                                   f"<b>Артикул продавца</b> - <i>{product_new.article_seller}</i>\n"
+                                   f"<b>Артикул товара</b> - <i>{product_new.article_product}</i>\n"
+                                   f"<b>Цена СПП</b> - <i>{product_new.price_spp} руб.</i>\n"
+                                   f"<b>Ссылка</b> - <i>{product_new.link}</i>\n"
+                                   f"<b>Клики</b> - <i>{product_new.click}</i>\n\n"
+                                   f"<b>У вас нет Фотографий!</b>\n"
+                                   f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
+                                   reply_markup=AdminViewWbMarkup.admin_in_product_wb())
+        await states.AdminChangeWb.enter_id.set()

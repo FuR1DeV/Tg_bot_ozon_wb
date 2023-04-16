@@ -73,10 +73,33 @@ async def product_ozon_add_photo(product_id, photo_id):
             return False
 
 
+async def product_wb_add_photo(product_id, photo_id):
+    """Добавляется Фото для Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    if product_wb.photo is None:
+        result = [photo_id]
+        await product_wb.update(photo=result).apply()
+        return False
+    else:
+        if len(product_wb.photo) >= 3:
+            return True
+        else:
+            result = product_wb.photo
+            result.append(photo_id)
+            await product_wb.update(photo=result).apply()
+            return False
+
+
 async def product_ozon_change_title(product_id, new_title):
     """Обновляется наименование товара Ozon"""
     product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
     await product_ozon.update(title=new_title).apply()
+
+
+async def product_wb_change_title(product_id, new_title):
+    """Обновляется наименование товара Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(title=new_title).apply()
 
 
 async def product_ozon_change_type_product(product_id, new_type_product):
@@ -85,10 +108,28 @@ async def product_ozon_change_type_product(product_id, new_type_product):
     await product_ozon.update(type_product=new_type_product).apply()
 
 
+async def product_wb_change_type_product(product_id, new_type_product):
+    """Обновляется Категория товара Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(type_product=new_type_product).apply()
+
+
 async def product_ozon_change_article_product(product_id, new_article_product):
     """Обновляется Артикул товара Ozon"""
     product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
     await product_ozon.update(article_product=int(new_article_product)).apply()
+
+
+async def product_wb_change_article_seller(product_id, new_article_seller):
+    """Обновляется Артикул продавца Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(article_seller=new_article_seller).apply()
+
+
+async def product_wb_change_article_product(product_id, new_article_product):
+    """Обновляется Артикул товара Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(article_product=int(new_article_product)).apply()
 
 
 async def product_ozon_change_price(product_id, new_price):
@@ -97,7 +138,19 @@ async def product_ozon_change_price(product_id, new_price):
     await product_ozon.update(price=int(new_price)).apply()
 
 
+async def product_wb_change_price(product_id, new_price_spp):
+    """Обновляется Цена СПП товара Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(price_spp=int(new_price_spp)).apply()
+
+
 async def product_ozon_change_link_utm(product_id, new_link_utm):
     """Обновляется Ссылка UTM товара Ozon"""
     product_ozon = await ProductsOzon.query.where(ProductsOzon.id == product_id).gino.first()
     await product_ozon.update(link_utm=new_link_utm).apply()
+
+
+async def product_wb_change_link(product_id, new_link):
+    """Обновляется Ссылка товара Wb"""
+    product_wb = await ProductsWb.query.where(ProductsWb.id == product_id).gino.first()
+    await product_wb.update(link=new_link).apply()

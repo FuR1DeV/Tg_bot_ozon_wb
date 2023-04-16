@@ -33,3 +33,13 @@ class AdminChangeOzon(StatesGroup):
     article_product: State = State()
     price: State = State()
     link_utm: State = State()
+
+
+class AdminChangeWb(StatesGroup):
+    enter_id: State = State()
+    title: State = State()
+    type_product: State = State()
+    article_seller: State = State()
+    article_product: State = State()
+    price_spp: State = State()
+    link: State = State()

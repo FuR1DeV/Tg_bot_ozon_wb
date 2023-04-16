@@ -2,10 +2,9 @@ __all__ = ["register_admin_handler"]
 
 from aiogram import Dispatcher
 
-import states
 from .admin import AdminCheckOzon, AdminCheckWb, AdminMain, \
-    AdminOzonAddProduct, AdminWbAddProduct, AdminOzonView
-from states import AdminStatesOzon, AdminStatesWb, AdminChangeOzon
+    AdminOzonAddProduct, AdminWbAddProduct, AdminOzonView, AdminWbView
+from states import AdminStatesOzon, AdminStatesWb, AdminChangeOzon, AdminChangeWb
 
 
 def register_admin_handler(disp: Dispatcher):
@@ -109,7 +108,7 @@ def register_admin_handler(disp: Dispatcher):
                                          state=["*"],
                                          text="admin_ozon_view")
     disp.register_message_handler(AdminOzonView.admin_ozon_enter_id,
-                                  state=states.AdminChangeOzon.enter_id,
+                                  state=AdminChangeOzon.enter_id,
                                   content_types=["photo", "text"])
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_back,
                                          state=["*"],
@@ -121,24 +120,69 @@ def register_admin_handler(disp: Dispatcher):
                                          state=["*"],
                                          text="admin_ozon_change_title")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_title_,
-                                  state=states.AdminChangeOzon.title)
+                                  state=AdminChangeOzon.title)
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_type_product,
                                          state=["*"],
                                          text="admin_ozon_change_type_product")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_type_product_,
-                                  state=states.AdminChangeOzon.type_product)
+                                  state=AdminChangeOzon.type_product)
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_article_product,
                                          state=["*"],
                                          text="admin_ozon_change_article_product")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_article_product_,
-                                  state=states.AdminChangeOzon.article_product)
+                                  state=AdminChangeOzon.article_product)
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_price,
                                          state=["*"],
                                          text="admin_ozon_change_price")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_price_,
-                                  state=states.AdminChangeOzon.price)
+                                  state=AdminChangeOzon.price)
     disp.register_callback_query_handler(AdminOzonView.admin_ozon_change_link_utm,
                                          state=["*"],
                                          text="admin_ozon_change_link_utm")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_link_utm_,
-                                  state=states.AdminChangeOzon.link_utm)
+                                  state=AdminChangeOzon.link_utm)
+
+    """Admin Wb Change"""
+
+    disp.register_callback_query_handler(AdminWbView.admin_wb_view,
+                                         state=["*"],
+                                         text="admin_wb_view")
+    disp.register_message_handler(AdminWbView.admin_wb_enter_id,
+                                  state=AdminChangeWb.enter_id,
+                                  content_types=["photo", "text"])
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_back,
+                                         state=["*"],
+                                         text="admin_wb_change_back")
+    disp.register_callback_query_handler(AdminWbView.admin_in_product_wb_back,
+                                         state=["*"],
+                                         text="admin_in_product_wb_back")
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_title,
+                                         state=["*"],
+                                         text="admin_wb_change_title")
+    disp.register_message_handler(AdminWbView.admin_wb_change_title_,
+                                  state=AdminChangeWb.title)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_type_product,
+                                         state=["*"],
+                                         text="admin_wb_change_type_product")
+    disp.register_message_handler(AdminWbView.admin_wb_change_type_product_,
+                                  state=AdminChangeWb.type_product)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_article_seller,
+                                         state=["*"],
+                                         text="admin_wb_change_article_seller")
+    disp.register_message_handler(AdminWbView.admin_wb_change_article_seller_,
+                                  state=AdminChangeWb.article_seller)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_article_product,
+                                         state=["*"],
+                                         text="admin_wb_change_article_product")
+    disp.register_message_handler(AdminWbView.admin_wb_change_article_product_,
+                                  state=AdminChangeWb.article_product)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_price_spp,
+                                         state=["*"],
+                                         text="admin_wb_change_price_spp")
+    disp.register_message_handler(AdminWbView.admin_wb_change_price_spp_,
+                                  state=AdminChangeWb.price_spp)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_change_link,
+                                         state=["*"],
+                                         text="admin_wb_change_link")
+    disp.register_message_handler(AdminWbView.admin_wb_change_link_,
+                                  state=AdminChangeWb.link)
