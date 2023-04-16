@@ -65,7 +65,7 @@ class AdminCheckOzon:
                                 f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                 f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
                                 f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
-                                f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
                                 f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
                 if len(book) == 5:
@@ -96,7 +96,7 @@ class AdminCheckOzon:
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                     f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
                                     f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
-                                    f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
                                     f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
                     if len(book) == 5:
@@ -162,7 +162,7 @@ class AdminCheckWb:
                                 f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                 f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                 f"<b>Ссылка</b> - <i>{i.link}</i>\n"
-                                f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
                                 f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                     page += 1
                 if len(book) == 5:
@@ -194,7 +194,7 @@ class AdminCheckWb:
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
                                     f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
                                     f"<b>Ссылка</b> - <i>{i.link}</i>\n"
-                                    f"<b>Фото</b> - <i>{i.photo}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len(i.photo)}</i>\n"
                                     f"<b>Клики</b> - <i>{i.click}</i>\n\n")
                         page += 1
                     if len(book) == 5:
