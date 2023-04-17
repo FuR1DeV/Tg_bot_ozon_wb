@@ -43,7 +43,7 @@ class AdminCheckOzon:
     @staticmethod
     async def admin_check_ozon_excel(callback: types.CallbackQuery):
         all_products = await general_get.products_ozon_all()
-        with open("table_ozon.csv", "w", newline='', encoding="windows_1251") as file:
+        with open("table_ozon.csv", "w", newline='', encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["id", "Наименование", "Категория", "Артикул товара",
                              "Цена", "Ссылка", "Ссылка UTM", "Фото", "Клики"])
@@ -150,7 +150,7 @@ class AdminCheckWb:
     @staticmethod
     async def admin_check_wb_excel(callback: types.CallbackQuery):
         all_products = await general_get.products_wb_all()
-        with open("table_wildberries.csv", "w", newline='', encoding="windows_1251") as file:
+        with open("table_wildberries.csv", "w", newline='', encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["id", "Наименование", "Категория", "Артикул продавца",
                              "Артикул товара", "Цена с учетом СПП", "Ссылка", "Фото", "Клики"])

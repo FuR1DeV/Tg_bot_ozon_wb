@@ -5,8 +5,10 @@ from aiogram.dispatcher import FSMContext
 from bot import dp, bot
 from data.commands import general_set, general_get
 from admin import register_admin_handler
+from user import register_user_handler
 from settings import config
 from markups.admin_markup import AdminCheckMarkup
+from markups.user_markup import UserCheckMarkup
 
 
 @dp.message_handler(Command("getlink"))
@@ -85,8 +87,13 @@ async def show_items_handler(message: types.Message):
                                            f"<b>Цена</b> - <i>{product_wb.price_spp} руб.</i>\n"
                                            f"<b>Ссылка</b> - <i>{product_wb.link}</i>\n")
     if len(product_id) == 1:
+        len_product_wb = await general_get.products_wb_all()
+        len_product_ozon = await general_get.products_ozon_all()
         await bot.send_message(message.from_user.id,
-                               "Пока в разработке")
+                               "<b>Добро пожаловать в меню Пользователя</b>\n"
+                               "<b>Вы можете просмотреть товары и загружать в Excel</b>\n\n"
+                               f"<b>Всего у вас товаров - {len(len_product_wb) + len(len_product_ozon)}</b>",
+                               reply_markup=UserCheckMarkup.user_check())
 
 
 @dp.message_handler(Command("admin"), state=["*"])
@@ -126,7 +133,7 @@ async def on_startup(_):
 
     """Регистрация хэндлеров"""
     register_admin_handler(dp)
-
+    register_user_handler(dp)
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

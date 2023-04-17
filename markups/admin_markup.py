@@ -1,10 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.callback_data import CallbackData
 
 from settings.config import KEYBOARD
-
-pagination_call = CallbackData("paginator", "key", "page")
-show_item = CallbackData("show_item", "item_id")
 
 
 class AdminCheckMarkup:

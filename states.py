@@ -43,3 +43,11 @@ class AdminChangeWb(StatesGroup):
     article_product: State = State()
     price_spp: State = State()
     link: State = State()
+
+
+class UserChangeOzon(StatesGroup):
+    enter_id: State = State()
+
+
+class UserChangeWb(StatesGroup):
+    enter_id: State = State()
