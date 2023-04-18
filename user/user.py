@@ -7,7 +7,7 @@ from aiogram.types import InputFile
 import states
 from bot import bot
 from markups.user_markup import UserCheckMarkup, UserViewOzonMarkup, UserViewWbMarkup
-from data.commands import general_set, general_get
+from data.commands import general_get
 
 
 class UserMain:
@@ -81,9 +81,12 @@ class UserCheckOzon:
                 break
         await callback.message.edit_text("".join(book),
                                          disable_web_page_preview=True,
-                                         reply_markup=UserCheckMarkup.user_check_next_page_ozon())
+                                         reply_markup=UserCheckMarkup.user_check_back_and_next_page_ozon(first=True))
         async with state.proxy() as data:
             data["page"] = page
+            data["first"] = False
+            data["middle"] = True
+            data["last"] = False
             data["items"] = items
             data["max_page"] = len(items)
 
@@ -114,10 +117,70 @@ class UserCheckOzon:
                 if len(book) == 5 or max_page - page < 5:
                     break
             data["page"] = page
-            if book:
+            if data.get("middle") and len(book) == 5:
+                data["last"] = False
                 await callback.message.edit_text("".join(book),
                                                  disable_web_page_preview=True,
-                                                 reply_markup=UserCheckMarkup.user_check_next_page_ozon())
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_ozon(middle=True))
+            elif len(book) < 5:
+                data["last"] = True
+                data["len_book"] = len(book)
+                await callback.message.edit_text("".join(book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_ozon(last=True))
+            else:
+                await bot.delete_message(callback.from_user.id, callback.message.message_id)
+                await bot.send_message(callback.from_user.id,
+                                       "<b>Больше товаров нет!</b>\n"
+                                       "<b>Вы в меню Ozon</b>",
+                                       reply_markup=UserCheckMarkup.user_check_ozon())
+
+    @staticmethod
+    async def user_check_ozon_tg_back(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            if data.get("last"):
+                page = data.get("page") - 6 - data.get("len_book")
+                data["last"] = False
+            else:
+                page = data.get("page") - 6
+            items = data.get("items")
+            book = []
+            max_page = data.get("max_page")
+            while True:
+                for i in items:
+                    if int(i.id) == page:
+                        try:
+                            len_photo = len(i.photo)
+                        except:
+                            len_photo = "Фото нет!"
+                        book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                    f"<b>Название</b> - <i>{i.title}</i>\n"
+                                    f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                    f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                    f"<b>Цена</b> - <i>{i.price} руб.</i>\n"
+                                    f"<b>Ссылка с UTM</b> - <i>{i.link_utm}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n\n")
+                        page -= 1
+                    if len(book) == 5:
+                        break
+                if len(book) == 5 or max_page - page < 5:
+                    break
+            data["page"] = page
+            new_book = book[::-1]
+            if page == 0:
+                data["page"] = page + 6
+                await callback.message.edit_text("".join(new_book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_ozon(first=True))
+            elif page != 0:
+                data["page"] = page + 6
+                await callback.message.edit_text("".join(new_book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_ozon(middle=True))
             else:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,
@@ -187,9 +250,12 @@ class UserCheckWb:
                 break
         await callback.message.edit_text("".join(book),
                                          disable_web_page_preview=True,
-                                         reply_markup=UserCheckMarkup.user_check_next_page_wb())
+                                         reply_markup=UserCheckMarkup.user_check_back_and_next_page_wb(first=True))
         async with state.proxy() as data:
             data["page"] = page
+            data["first"] = False
+            data["middle"] = True
+            data["last"] = False
             data["items"] = items
             data["max_page"] = len(items)
 
@@ -212,7 +278,7 @@ class UserCheckWb:
                                     f"<b>Категория</b> - <i>{i.type_product}</i>\n"
                                     f"<b>Артикул продавца</b> - <i>{i.article_seller}</i>\n"
                                     f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
-                                    f"<b>Цена с учетом СПП</b> - <i>{i.price_spp} руб.</i>\n"
+                                    f"<b>Цена</b> - <i>{i.price_spp} руб.</i>\n"
                                     f"<b>Ссылка</b> - <i>{i.link}</i>\n"
                                     f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n\n")
                         page += 1
@@ -221,10 +287,72 @@ class UserCheckWb:
                 if len(book) == 5 or max_page - page < 5:
                     break
             data["page"] = page
-            if book:
+            if data.get("middle") and len(book) == 5:
+                data["last"] = False
                 await callback.message.edit_text("".join(book),
                                                  disable_web_page_preview=True,
-                                                 reply_markup=UserCheckMarkup.user_check_next_page_wb())
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_wb(middle=True))
+            elif len(book) < 5:
+                data["last"] = True
+                data["len_book"] = 5 - len(book)
+                await callback.message.edit_text("".join(book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_wb(last=True))
+            else:
+                await bot.delete_message(callback.from_user.id, callback.message.message_id)
+                await bot.send_message(callback.from_user.id,
+                                       "<b>Больше товаров нет!</b>\n"
+                                       "<b>Вы в меню Wildberries</b>",
+                                       reply_markup=UserCheckMarkup.user_check_wb())
+
+    @staticmethod
+    async def user_check_wb_tg_back(callback: types.CallbackQuery, state: FSMContext):
+        async with state.proxy() as data:
+            if data.get("last"):
+                page = data.get("page") - 6 - data.get("len_book")
+                data["last"] = False
+            else:
+                page = data.get("page") - 6
+            items = data.get("items")
+            book = []
+            max_page = data.get("max_page")
+            while True:
+                for i in items:
+                    if int(i.id) == page:
+                        try:
+                            len_photo = len(i.photo)
+                        except:
+                            len_photo = "Фото нет!"
+                        book.append(f"<b>ID</b> - <i>{i.id}</i>\n"
+                                    f"<b>Название</b> - <i>{i.title}</i>\n"
+                                    f"<b>Категория</b> - <i>{i.type_product}</i>\n"
+                                    f"<b>Артикул продавца</b> - <i>{i.article_seller}</i>\n"
+                                    f"<b>Артикул товара</b> - <i>{i.article_product}</i>\n"
+                                    f"<b>Цена</b> - <i>{i.price_spp} руб.</i>\n"
+                                    f"<b>Ссылка</b> - <i>{i.link}</i>\n"
+                                    f"<b>Кол-во Фото</b> - <i>{len_photo}</i>\n\n")
+                        page -= 1
+                    if len(book) == 5:
+                        break
+                if len(book) == 5 or max_page - page < 5:
+                    break
+            data["page"] = page
+            new_book = book[::-1]
+            print(page)
+            if page == 0:
+                data["page"] = page + 6
+                await callback.message.edit_text("".join(new_book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_wb(first=True))
+            elif page != 0:
+                data["page"] = page + 6
+                await callback.message.edit_text("".join(new_book),
+                                                 disable_web_page_preview=True,
+                                                 reply_markup=UserCheckMarkup.
+                                                 user_check_back_and_next_page_wb(middle=True))
             else:
                 await bot.delete_message(callback.from_user.id, callback.message.message_id)
                 await bot.send_message(callback.from_user.id,

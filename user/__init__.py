@@ -27,6 +27,9 @@ def register_user_handler(disp: Dispatcher):
     disp.register_callback_query_handler(UserCheckOzon.user_check_ozon_tg_next,
                                          state=["*"],
                                          text="user_next_page_ozon")
+    disp.register_callback_query_handler(UserCheckOzon.user_check_ozon_tg_back,
+                                         state=["*"],
+                                         text="user_back_page_ozon")
 
     """User Check Wildberries"""
 
@@ -42,6 +45,9 @@ def register_user_handler(disp: Dispatcher):
     disp.register_callback_query_handler(UserCheckWb.user_check_wb_tg_next,
                                          state=["*"],
                                          text="user_next_page_wb")
+    disp.register_callback_query_handler(UserCheckWb.user_check_wb_tg_back,
+                                         state=["*"],
+                                         text="user_back_page_wb")
 
     """User Ozon View"""
 

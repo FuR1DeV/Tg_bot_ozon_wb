@@ -17,14 +17,29 @@ class UserCheckMarkup:
         return approve_
 
     @staticmethod
-    def user_check_next_page_ozon():
+    def user_check_back_and_next_page_ozon(first=False, middle=False, last=False):
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get = InlineKeyboardButton(text='Следующая страница',
-                                   callback_data=f'user_next_page_ozon')
-        get1 = InlineKeyboardButton(text='Назад',
-                                    callback_data=f'user_ozon_check')
-        approve_.insert(get)
-        approve_.insert(get1)
+        if first:
+            approve_ = InlineKeyboardMarkup(row_width=1)
+            next = InlineKeyboardButton(text='Следующая страница',
+                                        callback_data=f'user_next_page_ozon')
+            approve_.insert(next)
+        if middle:
+            approve_ = InlineKeyboardMarkup(row_width=2)
+            back = InlineKeyboardButton(text='Предыдущая страница',
+                                        callback_data=f'user_back_page_ozon')
+            next = InlineKeyboardButton(text='Следующая страница',
+                                        callback_data=f'user_next_page_ozon')
+            approve_.insert(back)
+            approve_.insert(next)
+        if last:
+            approve_ = InlineKeyboardMarkup(row_width=1)
+            back = InlineKeyboardButton(text='Предыдущая страница',
+                                        callback_data=f'user_back_page_ozon')
+            approve_.insert(back)
+        rollback = InlineKeyboardButton(text='Назад',
+                                        callback_data=f'user_ozon_check')
+        approve_.insert(rollback)
         return approve_
 
     @staticmethod
@@ -62,14 +77,29 @@ class UserCheckMarkup:
         return approve_
 
     @staticmethod
-    def user_check_next_page_wb():
+    def user_check_back_and_next_page_wb(first=False, middle=False, last=False):
         approve_ = InlineKeyboardMarkup(row_width=1)
-        get = InlineKeyboardButton(text='Следующая страница',
-                                   callback_data=f'user_next_page_wb')
-        get1 = InlineKeyboardButton(text='Назад',
-                                    callback_data=f'user_wb_check')
-        approve_.insert(get)
-        approve_.insert(get1)
+        if first:
+            approve_ = InlineKeyboardMarkup(row_width=1)
+            next = InlineKeyboardButton(text='Следующая страница',
+                                        callback_data=f'user_next_page_wb')
+            approve_.insert(next)
+        if middle:
+            approve_ = InlineKeyboardMarkup(row_width=2)
+            back = InlineKeyboardButton(text='Предыдущая страница',
+                                        callback_data=f'user_back_page_wb')
+            next = InlineKeyboardButton(text='Следующая страница',
+                                        callback_data=f'user_next_page_wb')
+            approve_.insert(back)
+            approve_.insert(next)
+        if last:
+            approve_ = InlineKeyboardMarkup(row_width=1)
+            back = InlineKeyboardButton(text='Предыдущая страница',
+                                        callback_data=f'user_back_page_wb')
+            approve_.insert(back)
+        rollback = InlineKeyboardButton(text='Назад',
+                                        callback_data=f'user_wb_check')
+        approve_.insert(rollback)
         return approve_
 
 
