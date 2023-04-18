@@ -92,7 +92,7 @@ async def show_items_handler(message: types.Message):
         await bot.send_message(message.from_user.id,
                                "<b>Добро пожаловать в меню Пользователя</b>\n"
                                "<b>Вы можете просмотреть товары и загружать в Excel</b>\n\n"
-                               f"<b>Всего у вас товаров - {len(len_product_wb) + len(len_product_ozon)}</b>",
+                               f"<b>Всего товаров - {len(len_product_wb) + len(len_product_ozon)}</b>",
                                reply_markup=UserCheckMarkup.user_check())
 
 
