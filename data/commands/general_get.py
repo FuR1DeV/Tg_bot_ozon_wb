@@ -1,3 +1,5 @@
+from sqlalchemy import desc
+
 from data.models.users import Users
 from data.models.admins import Admins
 from data.models.products import ProductsWb, ProductsOzon
@@ -21,6 +23,16 @@ async def products_wb_all():
 async def products_ozon_all():
     products_ozon = await ProductsOzon.query.gino.all()
     return products_ozon
+
+
+async def products_ozon_all_distinct():
+    products_ozon = await ProductsOzon.query.order_by(desc(ProductsOzon.click)).where(ProductsOzon.click > 0).gino.all()
+    return products_ozon
+
+
+async def products_wb_all_distinct():
+    products_wb = await ProductsWb.query.order_by(desc(ProductsWb.click)).where(ProductsWb.click > 0).gino.all()
+    return products_wb
 
 
 async def product_ozon_select(product_id):

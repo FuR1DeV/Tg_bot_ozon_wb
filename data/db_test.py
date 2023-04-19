@@ -5,6 +5,7 @@ from sqlalchemy import and_, or_
 
 from bot import dp
 from data.commands import general_set
+from data.models.products import ProductsOzon
 from settings import config
 from data.db_gino import db
 from data import db_gino
@@ -12,19 +13,15 @@ from data import db_gino
 
 async def db_test():
     await db_gino.on_startup(dp)
-    from openpyxl import load_workbook
+    from sqlalchemy import desc
 
-    book = load_workbook(filename=f"для БОТА.xlsx")
-    sheet = book["Общий отчет"]
+    products_ozon = await ProductsOzon.query.order_by(desc(ProductsOzon.click)).where(
+        ProductsOzon.click > 0).gino.all()
 
-    for row in range(2, sheet.max_row + 1):
-        if sheet["A" + str(row)].value is not None:
-            await general_set.product_wb_add(sheet["A" + str(row)].value,
-                                             sheet["B" + str(row)].value,
-                                             sheet["C" + str(row)].value,
-                                             sheet["D" + str(row)].value,
-                                             sheet["E" + str(row)].value,
-                                             sheet["F" + str(row)].value)
+    for i in products_ozon:
+        print(i.click)
+
+    # print(products_ozon)
 
 
 if __name__ == '__main__':

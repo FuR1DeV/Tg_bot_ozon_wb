@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 load_dotenv()
 
-VERSION = '0.0.1'
+VERSION = '1.0'
 AUTHOR = 'Vasiliy Turtugeshev'
 
 HOST = os.getenv('HOST')

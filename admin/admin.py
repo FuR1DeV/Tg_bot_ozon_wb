@@ -1130,6 +1130,20 @@ class AdminOzonView:
                                    reply_markup=AdminViewOzonMarkup.admin_in_product_ozon())
         await states.AdminChangeOzon.enter_id.set()
 
+    @staticmethod
+    async def admin_ozon_statistics(callback: types.CallbackQuery):
+        all_products = await general_get.products_ozon_all_distinct()
+        with open("table_ozon_sort.csv", "w", newline='', encoding="utf-8") as file:
+            writer = csv.writer(file)
+            writer.writerow(["id", "Клики", "Наименование", "Категория", "Артикул товара",
+                             "Цена", "Ссылка", "Ссылка UTM", "Фото", ])
+            for i in all_products:
+                writer.writerow([i.id, i.click, i.title, i.type_product, i.article_product,
+                                 i.price, i.link, i.link_utm, i.photo])
+        table_ozon = InputFile("table_ozon_sort.csv")
+        await bot.send_document(chat_id=callback.from_user.id,
+                                document=table_ozon)
+
 
 class AdminWbView:
 
@@ -1634,3 +1648,17 @@ class AdminWbView:
                                    f"<b>Вы можете добавить сюда 3 Фотографии (Добавлять по 1 Фото)</b>",
                                    reply_markup=AdminViewWbMarkup.admin_in_product_wb())
         await states.AdminChangeWb.enter_id.set()
+
+    @staticmethod
+    async def admin_wb_statistics(callback: types.CallbackQuery):
+        all_products = await general_get.products_wb_all_distinct()
+        with open("table_wildberries_sort.csv", "w", newline='', encoding="utf-8") as file:
+            writer = csv.writer(file)
+            writer.writerow(["id", "Клики", "Наименование", "Категория", "Артикул продавца",
+                             "Артикул товара", "Цена с учетом СПП", "Ссылка", "Фото"])
+            for i in all_products:
+                writer.writerow([i.id, i.click, i.title, i.type_product, i.article_seller,
+                                 i.article_product, i.price_spp, i.link, i.photo])
+        table_wb = InputFile("table_wildberries_sort.csv")
+        await bot.send_document(chat_id=callback.from_user.id,
+                                document=table_wb)

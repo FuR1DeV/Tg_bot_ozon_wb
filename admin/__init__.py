@@ -141,6 +141,9 @@ def register_admin_handler(disp: Dispatcher):
                                          text="admin_ozon_change_link_utm")
     disp.register_message_handler(AdminOzonView.admin_ozon_change_link_utm_,
                                   state=AdminChangeOzon.link_utm)
+    disp.register_callback_query_handler(AdminOzonView.admin_ozon_statistics,
+                                         state=["*"],
+                                         text="admin_ozon_statistics")
 
     """Admin Wb Change"""
 
@@ -186,3 +189,6 @@ def register_admin_handler(disp: Dispatcher):
                                          text="admin_wb_change_link")
     disp.register_message_handler(AdminWbView.admin_wb_change_link_,
                                   state=AdminChangeWb.link)
+    disp.register_callback_query_handler(AdminWbView.admin_wb_statistics,
+                                         state=["*"],
+                                         text="admin_wb_statistics")

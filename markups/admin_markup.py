@@ -27,13 +27,16 @@ class AdminCheckMarkup:
                                     callback_data='admin_ozon_view')
         get3 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_ozon_add')
-        get4 = InlineKeyboardButton(text='Главное Меню',
+        get4 = InlineKeyboardButton(text='Статистика',
+                                    callback_data='admin_ozon_statistics')
+        get5 = InlineKeyboardButton(text='Главное Меню',
                                     callback_data='admin_main')
         approve_.insert(get)
         approve_.insert(get1)
         approve_.insert(get2)
         approve_.insert(get3)
         approve_.insert(get4)
+        approve_.insert(get5)
         return approve_
 
     @staticmethod
@@ -47,13 +50,16 @@ class AdminCheckMarkup:
                                     callback_data='admin_wb_view')
         get3 = InlineKeyboardButton(text='Добавить Товар',
                                     callback_data='admin_wb_add')
-        get4 = InlineKeyboardButton(text='Главное Меню',
+        get4 = InlineKeyboardButton(text='Статистика',
+                                    callback_data='admin_wb_statistics')
+        get5 = InlineKeyboardButton(text='Главное Меню',
                                     callback_data='admin_main')
         approve_.insert(get)
         approve_.insert(get1)
         approve_.insert(get2)
         approve_.insert(get3)
         approve_.insert(get4)
+        approve_.insert(get5)
         return approve_
 
     @staticmethod
